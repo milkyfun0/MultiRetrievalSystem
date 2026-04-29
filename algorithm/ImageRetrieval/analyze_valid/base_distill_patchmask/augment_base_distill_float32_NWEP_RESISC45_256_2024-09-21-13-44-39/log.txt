@@ -1,0 +1,652 @@
+--- Distill ViT Network 256bits NWEP_RESISC45 ---
+ Model has 41876740 parameters
+ teacher has 38718722 parameters
+ student has 2501376 parameters
+ align has 525312 parameters
+---------requires_grad=False---------
+module.visual_student.class_embedding
+module.visual_student.positional_embedding
+module.visual_student.conv1.weight
+module.visual_student.transformer.resblocks.0.attn.in_proj_weight
+module.visual_student.transformer.resblocks.0.attn.in_proj_bias
+module.visual_student.transformer.resblocks.0.attn.out_proj.weight
+module.visual_student.transformer.resblocks.0.attn.out_proj.bias
+module.visual_student.transformer.resblocks.0.ln_1.weight
+module.visual_student.transformer.resblocks.0.ln_1.bias
+module.visual_student.transformer.resblocks.0.mlp.c_fc.weight
+module.visual_student.transformer.resblocks.0.mlp.c_fc.bias
+module.visual_student.transformer.resblocks.0.mlp.c_proj.weight
+module.visual_student.transformer.resblocks.0.mlp.c_proj.bias
+module.visual_student.transformer.resblocks.0.ln_2.weight
+module.visual_student.transformer.resblocks.0.ln_2.bias
+module.visual_student.transformer.resblocks.1.attn.in_proj_weight
+module.visual_student.transformer.resblocks.1.attn.in_proj_bias
+module.visual_student.transformer.resblocks.1.attn.out_proj.weight
+module.visual_student.transformer.resblocks.1.attn.out_proj.bias
+module.visual_student.transformer.resblocks.1.ln_1.weight
+module.visual_student.transformer.resblocks.1.ln_1.bias
+module.visual_student.transformer.resblocks.1.mlp.c_fc.weight
+module.visual_student.transformer.resblocks.1.mlp.c_fc.bias
+module.visual_student.transformer.resblocks.1.mlp.c_proj.weight
+module.visual_student.transformer.resblocks.1.mlp.c_proj.bias
+module.visual_student.transformer.resblocks.1.ln_2.weight
+module.visual_student.transformer.resblocks.1.ln_2.bias
+module.visual_student.transformer.resblocks.2.attn.in_proj_weight
+module.visual_student.transformer.resblocks.2.attn.in_proj_bias
+module.visual_student.transformer.resblocks.2.attn.out_proj.weight
+module.visual_student.transformer.resblocks.2.attn.out_proj.bias
+module.visual_student.transformer.resblocks.2.ln_1.weight
+module.visual_student.transformer.resblocks.2.ln_1.bias
+module.visual_student.transformer.resblocks.2.mlp.c_fc.weight
+module.visual_student.transformer.resblocks.2.mlp.c_fc.bias
+module.visual_student.transformer.resblocks.2.mlp.c_proj.weight
+module.visual_student.transformer.resblocks.2.mlp.c_proj.bias
+module.visual_student.transformer.resblocks.2.ln_2.weight
+module.visual_student.transformer.resblocks.2.ln_2.bias
+module.alignModule.alignModule.0.localSelect.index_select
+module.alignModule.alignModule.0.localSelect.shift_window_patch_numbers
+module.alignModule.alignModule.0.localSelect.gaussian_prob
+module.alignModule.alignModule.1.localSelect.index_select
+module.alignModule.alignModule.1.localSelect.shift_window_patch_numbers
+module.alignModule.alignModule.1.localSelect.gaussian_prob
+---------requires_grad=False---------
+[2024-09-21 13:47:05] Epoch: [000/300] total_loss: 20.67 con_loss_student: 5.98  triple_loss_student: 7.16  global_align_loss: 4.11  low_align_loss: 3.42   time: 142.13s
+[2024-09-21 13:49:23] Epoch: [001/300] total_loss: 19.41 con_loss_student: 4.94  triple_loss_student: 7.51  global_align_loss: 4.08  low_align_loss: 2.88   time: 137.89s
+[2024-09-21 13:51:41] Epoch: [002/300] total_loss: 18.61 con_loss_student: 4.64  triple_loss_student: 7.17  global_align_loss: 4.05  low_align_loss: 2.74   time: 138.67s
+[2024-09-21 13:53:58] Epoch: [003/300] total_loss: 18.07 con_loss_student: 4.47  triple_loss_student: 6.92  global_align_loss: 4.02  low_align_loss: 2.66   time: 136.98s
+[2024-09-21 13:56:16] Epoch: [004/300] total_loss: 17.78 con_loss_student: 4.34  triple_loss_student: 6.86  global_align_loss: 3.98  low_align_loss: 2.59   time: 137.88s
+[2024-09-21 13:58:36] Epoch: [005/300] total_loss: 17.40 con_loss_student: 4.24  triple_loss_student: 6.70  global_align_loss: 3.93  low_align_loss: 2.54   time: 140.04s
+[2024-09-21 14:00:56] Epoch: [006/300] total_loss: 17.26 con_loss_student: 4.19  triple_loss_student: 6.73  global_align_loss: 3.87  low_align_loss: 2.48   time: 139.81s
+[2024-09-21 14:03:13] Epoch: [007/300] total_loss: 16.91 con_loss_student: 4.06  triple_loss_student: 6.59  global_align_loss: 3.82  low_align_loss: 2.45   time: 137.29s
+[2024-09-21 14:05:28] Epoch: [008/300] total_loss: 16.67 con_loss_student: 4.01  triple_loss_student: 6.49  global_align_loss: 3.75  low_align_loss: 2.41   time: 134.63s
+[2024-09-21 14:07:44] Epoch: [009/300] total_loss: 16.45 con_loss_student: 3.96  triple_loss_student: 6.43  global_align_loss: 3.69  low_align_loss: 2.37   time: 136.53s
+[2024-09-21 14:10:05] Epoch: [010/300] total_loss: 16.12 con_loss_student: 3.84  triple_loss_student: 6.29  global_align_loss: 3.64  low_align_loss: 2.35   time: 141.00s
+[2024-09-21 14:12:24] Epoch: [011/300] total_loss: 15.96 con_loss_student: 3.81  triple_loss_student: 6.26  global_align_loss: 3.58  low_align_loss: 2.32   time: 138.64s
+[2024-09-21 14:14:41] Epoch: [012/300] total_loss: 15.73 con_loss_student: 3.74  triple_loss_student: 6.17  global_align_loss: 3.53  low_align_loss: 2.30   time: 137.45s
+[2024-09-21 14:17:00] Epoch: [013/300] total_loss: 15.61 con_loss_student: 3.74  triple_loss_student: 6.13  global_align_loss: 3.48  low_align_loss: 2.26   time: 138.17s
+[2024-09-21 14:19:20] Epoch: [014/300] total_loss: 15.34 con_loss_student: 3.65  triple_loss_student: 6.03  global_align_loss: 3.42  low_align_loss: 2.23   time: 140.04s
+[2024-09-21 14:21:39] Epoch: [015/300] total_loss: 15.29 con_loss_student: 3.67  triple_loss_student: 6.05  global_align_loss: 3.37  low_align_loss: 2.20   time: 139.45s
+[2024-09-21 14:23:55] Epoch: [016/300] total_loss: 15.01 con_loss_student: 3.61  triple_loss_student: 5.90  global_align_loss: 3.32  low_align_loss: 2.18   time: 135.77s
+[2024-09-21 14:26:13] Epoch: [017/300] total_loss: 14.78 con_loss_student: 3.53  triple_loss_student: 5.81  global_align_loss: 3.28  low_align_loss: 2.17   time: 137.80s
+[2024-09-21 14:28:27] Epoch: [018/300] total_loss: 14.63 con_loss_student: 3.50  triple_loss_student: 5.75  global_align_loss: 3.23  low_align_loss: 2.14   time: 134.37s
+[2024-09-21 14:30:43] Epoch: [019/300] total_loss: 14.46 con_loss_student: 3.49  triple_loss_student: 5.66  global_align_loss: 3.19  low_align_loss: 2.12   time: 135.82s
+[2024-09-21 14:33:00] Epoch: [020/300] total_loss: 14.44 con_loss_student: 3.48  triple_loss_student: 5.72  global_align_loss: 3.14  low_align_loss: 2.09   time: 137.51s
+[2024-09-21 14:35:16] Epoch: [021/300] total_loss: 14.22 con_loss_student: 3.44  triple_loss_student: 5.60  global_align_loss: 3.10  low_align_loss: 2.08   time: 135.95s
+[2024-09-21 14:37:34] Epoch: [022/300] total_loss: 14.03 con_loss_student: 3.40  triple_loss_student: 5.51  global_align_loss: 3.06  low_align_loss: 2.06   time: 137.18s
+[2024-09-21 14:39:52] Epoch: [023/300] total_loss: 13.70 con_loss_student: 3.30  triple_loss_student: 5.34  global_align_loss: 3.01  low_align_loss: 2.04   time: 138.74s
+[2024-09-21 14:42:08] Epoch: [024/300] total_loss: 13.76 con_loss_student: 3.35  triple_loss_student: 5.42  global_align_loss: 2.97  low_align_loss: 2.02   time: 135.96s
+[2024-09-21 14:44:25] Epoch: [025/300] total_loss: 13.60 con_loss_student: 3.33  triple_loss_student: 5.33  global_align_loss: 2.94  low_align_loss: 2.00   time: 136.55s
+[2024-09-21 14:46:43] Epoch: [026/300] total_loss: 13.51 con_loss_student: 3.31  triple_loss_student: 5.33  global_align_loss: 2.89  low_align_loss: 1.98   time: 138.25s
+[2024-09-21 14:49:04] Epoch: [027/300] total_loss: 13.34 con_loss_student: 3.27  triple_loss_student: 5.25  global_align_loss: 2.86  low_align_loss: 1.97   time: 140.91s
+[2024-09-21 14:51:21] Epoch: [028/300] total_loss: 13.34 con_loss_student: 3.27  triple_loss_student: 5.30  global_align_loss: 2.81  low_align_loss: 1.95   time: 137.49s
+[2024-09-21 14:53:40] Epoch: [029/300] total_loss: 13.20 con_loss_student: 3.25  triple_loss_student: 5.24  global_align_loss: 2.78  low_align_loss: 1.93   time: 138.57s
+[2024-09-21 14:55:59] Epoch: [030/300] total_loss: 13.01 con_loss_student: 3.21  triple_loss_student: 5.15  global_align_loss: 2.74  low_align_loss: 1.91   time: 138.92s
+[2024-09-21 14:58:14] Epoch: [031/300] total_loss: 12.91 con_loss_student: 3.19  triple_loss_student: 5.12  global_align_loss: 2.70  low_align_loss: 1.90   time: 134.65s
+[2024-09-21 15:00:33] Epoch: [032/300] total_loss: 12.79 con_loss_student: 3.18  triple_loss_student: 5.07  global_align_loss: 2.67  low_align_loss: 1.88   time: 139.17s
+[2024-09-21 15:02:49] Epoch: [033/300] total_loss: 12.85 con_loss_student: 3.20  triple_loss_student: 5.15  global_align_loss: 2.64  low_align_loss: 1.86   time: 136.59s
+[2024-09-21 15:05:06] Epoch: [034/300] total_loss: 12.64 con_loss_student: 3.17  triple_loss_student: 5.02  global_align_loss: 2.60  low_align_loss: 1.85   time: 136.17s
+[2024-09-21 15:07:22] Epoch: [035/300] total_loss: 12.51 con_loss_student: 3.14  triple_loss_student: 4.97  global_align_loss: 2.56  low_align_loss: 1.84   time: 136.80s
+[2024-09-21 15:09:41] Epoch: [036/300] total_loss: 12.36 con_loss_student: 3.11  triple_loss_student: 4.90  global_align_loss: 2.52  low_align_loss: 1.83   time: 138.59s
+[2024-09-21 15:11:58] Epoch: [037/300] total_loss: 12.23 con_loss_student: 3.10  triple_loss_student: 4.83  global_align_loss: 2.49  low_align_loss: 1.81   time: 137.02s
+[2024-09-21 15:14:15] Epoch: [038/300] total_loss: 12.24 con_loss_student: 3.12  triple_loss_student: 4.86  global_align_loss: 2.46  low_align_loss: 1.80   time: 136.69s
+[2024-09-21 15:16:34] Epoch: [039/300] total_loss: 12.16 con_loss_student: 3.10  triple_loss_student: 4.83  global_align_loss: 2.44  low_align_loss: 1.78   time: 139.62s
+[2024-09-21 15:18:52] Epoch: [040/300] total_loss: 12.02 con_loss_student: 3.07  triple_loss_student: 4.77  global_align_loss: 2.40  low_align_loss: 1.77   time: 137.78s
+[2024-09-21 15:21:09] Epoch: [041/300] total_loss: 12.03 con_loss_student: 3.08  triple_loss_student: 4.82  global_align_loss: 2.37  low_align_loss: 1.76   time: 136.83s
+[2024-09-21 15:23:26] Epoch: [042/300] total_loss: 11.84 con_loss_student: 3.05  triple_loss_student: 4.70  global_align_loss: 2.34  low_align_loss: 1.75   time: 136.69s
+[2024-09-21 15:25:42] Epoch: [043/300] total_loss: 11.90 con_loss_student: 3.08  triple_loss_student: 4.76  global_align_loss: 2.33  low_align_loss: 1.73   time: 136.82s
+[2024-09-21 15:28:00] Epoch: [044/300] total_loss: 11.56 con_loss_student: 2.99  triple_loss_student: 4.56  global_align_loss: 2.29  low_align_loss: 1.72   time: 137.96s
+[2024-09-21 15:30:16] Epoch: [045/300] total_loss: 11.63 con_loss_student: 3.05  triple_loss_student: 4.62  global_align_loss: 2.26  low_align_loss: 1.71   time: 135.26s
+[2024-09-21 15:32:31] Epoch: [046/300] total_loss: 11.42 con_loss_student: 3.00  triple_loss_student: 4.50  global_align_loss: 2.22  low_align_loss: 1.70   time: 135.41s
+[2024-09-21 15:34:48] Epoch: [047/300] total_loss: 11.45 con_loss_student: 3.02  triple_loss_student: 4.54  global_align_loss: 2.21  low_align_loss: 1.69   time: 136.66s
+[2024-09-21 15:37:07] Epoch: [048/300] total_loss: 11.47 con_loss_student: 3.03  triple_loss_student: 4.58  global_align_loss: 2.18  low_align_loss: 1.68   time: 139.73s
+[2024-09-21 15:39:29] Epoch: [049/300] total_loss: 11.42 con_loss_student: 3.03  triple_loss_student: 4.56  global_align_loss: 2.16  low_align_loss: 1.66   time: 141.47s
+[2024-09-21 15:41:31] Epoch: [050/300] total_loss: 11.28 con_loss_student: 3.01  triple_loss_student: 4.49  global_align_loss: 2.13  low_align_loss: 1.65   time: 122.16s
+[2024-09-21 15:43:47] Epoch: [051/300] total_loss: 11.24 con_loss_student: 2.98  triple_loss_student: 4.51  global_align_loss: 2.11  low_align_loss: 1.64   time: 136.24s
+[2024-09-21 15:45:49] Epoch: [052/300] total_loss: 10.98 con_loss_student: 2.93  triple_loss_student: 4.34  global_align_loss: 2.07  low_align_loss: 1.64   time: 121.39s
+[2024-09-21 15:48:00] Epoch: [053/300] total_loss: 11.08 con_loss_student: 2.97  triple_loss_student: 4.42  global_align_loss: 2.06  low_align_loss: 1.63   time: 130.98s
+[2024-09-21 15:50:07] Epoch: [054/300] total_loss: 10.90 con_loss_student: 2.94  triple_loss_student: 4.31  global_align_loss: 2.03  low_align_loss: 1.62   time: 126.90s
+[2024-09-21 15:52:20] Epoch: [055/300] total_loss: 11.08 con_loss_student: 3.01  triple_loss_student: 4.43  global_align_loss: 2.03  low_align_loss: 1.60   time: 133.37s
+[2024-09-21 15:54:30] Epoch: [056/300] total_loss: 11.01 con_loss_student: 3.00  triple_loss_student: 4.40  global_align_loss: 2.01  low_align_loss: 1.60   time: 129.99s
+[2024-09-21 15:56:35] Epoch: [057/300] total_loss: 10.80 con_loss_student: 2.94  triple_loss_student: 4.30  global_align_loss: 1.98  low_align_loss: 1.59   time: 125.34s
+[2024-09-21 15:58:47] Epoch: [058/300] total_loss: 10.70 con_loss_student: 2.92  triple_loss_student: 4.25  global_align_loss: 1.96  low_align_loss: 1.58   time: 131.91s
+[2024-09-21 16:00:45] Epoch: [059/300] total_loss: 10.65 con_loss_student: 2.94  triple_loss_student: 4.21  global_align_loss: 1.93  low_align_loss: 1.57   time: 118.07s
+[2024-09-21 16:02:59] Epoch: [060/300] total_loss: 10.56 con_loss_student: 2.90  triple_loss_student: 4.19  global_align_loss: 1.91  low_align_loss: 1.56   time: 133.54s
+[2024-09-21 16:05:04] Epoch: [061/300] total_loss: 10.59 con_loss_student: 2.92  triple_loss_student: 4.22  global_align_loss: 1.89  low_align_loss: 1.55   time: 124.88s
+[2024-09-21 16:07:19] Epoch: [062/300] total_loss: 10.61 con_loss_student: 2.93  triple_loss_student: 4.26  global_align_loss: 1.87  low_align_loss: 1.55   time: 135.21s
+[2024-09-21 16:09:25] Epoch: [063/300] total_loss: 10.49 con_loss_student: 2.91  triple_loss_student: 4.17  global_align_loss: 1.87  low_align_loss: 1.54   time: 126.59s
+[2024-09-21 16:11:40] Epoch: [064/300] total_loss: 10.46 con_loss_student: 2.92  triple_loss_student: 4.16  global_align_loss: 1.84  low_align_loss: 1.53   time: 134.07s
+[2024-09-21 16:13:49] Epoch: [065/300] total_loss: 10.29 con_loss_student: 2.89  triple_loss_student: 4.06  global_align_loss: 1.82  low_align_loss: 1.52   time: 129.16s
+[2024-09-21 16:16:00] Epoch: [066/300] total_loss: 10.24 con_loss_student: 2.86  triple_loss_student: 4.06  global_align_loss: 1.79  low_align_loss: 1.52   time: 130.94s
+[2024-09-21 16:18:10] Epoch: [067/300] total_loss: 10.34 con_loss_student: 2.93  triple_loss_student: 4.11  global_align_loss: 1.80  low_align_loss: 1.51   time: 130.29s
+[2024-09-21 16:20:16] Epoch: [068/300] total_loss: 10.38 con_loss_student: 2.94  triple_loss_student: 4.16  global_align_loss: 1.79  low_align_loss: 1.50   time: 126.15s
+[2024-09-21 16:22:30] Epoch: [069/300] total_loss: 10.18 con_loss_student: 2.90  triple_loss_student: 4.02  global_align_loss: 1.77  low_align_loss: 1.49   time: 134.06s
+[2024-09-21 16:24:31] Epoch: [070/300] total_loss: 9.86  con_loss_student: 2.82  triple_loss_student: 3.83  global_align_loss: 1.72  low_align_loss: 1.49   time: 121.06s
+[2024-09-21 16:26:45] Epoch: [071/300] total_loss: 9.97  con_loss_student: 2.86  triple_loss_student: 3.91  global_align_loss: 1.72  low_align_loss: 1.48   time: 133.59s
+[2024-09-21 16:28:48] Epoch: [072/300] total_loss: 10.00 con_loss_student: 2.88  triple_loss_student: 3.94  global_align_loss: 1.72  low_align_loss: 1.47   time: 123.33s
+[2024-09-21 16:31:04] Epoch: [073/300] total_loss: 10.00 con_loss_student: 2.89  triple_loss_student: 3.95  global_align_loss: 1.70  low_align_loss: 1.46   time: 135.52s
+[2024-09-21 16:33:11] Epoch: [074/300] total_loss: 9.87  con_loss_student: 2.86  triple_loss_student: 3.87  global_align_loss: 1.69  low_align_loss: 1.46   time: 127.23s
+[2024-09-21 16:35:18] Epoch: [075/300] total_loss: 9.86  con_loss_student: 2.86  triple_loss_student: 3.87  global_align_loss: 1.68  low_align_loss: 1.45   time: 127.36s
+[2024-09-21 16:37:26] Epoch: [076/300] total_loss: 9.50  con_loss_student: 2.76  triple_loss_student: 3.68  global_align_loss: 1.62  low_align_loss: 1.45   time: 128.11s
+[2024-09-21 16:39:28] Epoch: [077/300] total_loss: 9.60  con_loss_student: 2.81  triple_loss_student: 3.73  global_align_loss: 1.61  low_align_loss: 1.44   time: 121.50s
+[2024-09-21 16:41:41] Epoch: [078/300] total_loss: 9.77  con_loss_student: 2.88  triple_loss_student: 3.82  global_align_loss: 1.64  low_align_loss: 1.43   time: 132.81s
+[2024-09-21 16:43:39] Epoch: [079/300] total_loss: 9.60  con_loss_student: 2.83  triple_loss_student: 3.74  global_align_loss: 1.61  low_align_loss: 1.43   time: 118.66s
+[2024-09-21 16:45:50] Epoch: [080/300] total_loss: 9.58  con_loss_student: 2.83  triple_loss_student: 3.72  global_align_loss: 1.60  low_align_loss: 1.42   time: 131.09s
+[2024-09-21 16:47:53] Epoch: [081/300] total_loss: 9.50  con_loss_student: 2.82  triple_loss_student: 3.68  global_align_loss: 1.59  low_align_loss: 1.41   time: 122.95s
+[2024-09-21 16:50:04] Epoch: [082/300] total_loss: 9.48  con_loss_student: 2.82  triple_loss_student: 3.68  global_align_loss: 1.58  low_align_loss: 1.41   time: 130.47s
+[2024-09-21 16:52:11] Epoch: [083/300] total_loss: 9.39  con_loss_student: 2.80  triple_loss_student: 3.63  global_align_loss: 1.56  low_align_loss: 1.40   time: 127.32s
+[2024-09-21 16:54:20] Epoch: [084/300] total_loss: 9.28  con_loss_student: 2.77  triple_loss_student: 3.58  global_align_loss: 1.53  low_align_loss: 1.40   time: 129.07s
+[2024-09-21 16:56:30] Epoch: [085/300] total_loss: 9.45  con_loss_student: 2.84  triple_loss_student: 3.67  global_align_loss: 1.55  low_align_loss: 1.39   time: 129.65s
+[2024-09-21 16:58:36] Epoch: [086/300] total_loss: 9.26  con_loss_student: 2.80  triple_loss_student: 3.56  global_align_loss: 1.51  low_align_loss: 1.39   time: 126.40s
+[2024-09-21 17:00:48] Epoch: [087/300] total_loss: 9.23  con_loss_student: 2.79  triple_loss_student: 3.54  global_align_loss: 1.52  low_align_loss: 1.38   time: 131.30s
+[2024-09-21 17:02:49] Epoch: [088/300] total_loss: 9.35  con_loss_student: 2.83  triple_loss_student: 3.62  global_align_loss: 1.53  low_align_loss: 1.37   time: 121.47s
+[2024-09-21 17:05:05] Epoch: [089/300] total_loss: 9.23  con_loss_student: 2.79  triple_loss_student: 3.56  global_align_loss: 1.51  low_align_loss: 1.37   time: 136.15s
+[2024-09-21 17:07:11] Epoch: [090/300] total_loss: 9.17  con_loss_student: 2.78  triple_loss_student: 3.52  global_align_loss: 1.50  low_align_loss: 1.36   time: 125.97s
+[2024-09-21 17:09:24] Epoch: [091/300] total_loss: 9.14  con_loss_student: 2.79  triple_loss_student: 3.51  global_align_loss: 1.48  low_align_loss: 1.36   time: 133.03s
+[2024-09-21 17:11:27] Epoch: [092/300] total_loss: 9.22  con_loss_student: 2.83  triple_loss_student: 3.54  global_align_loss: 1.50  low_align_loss: 1.35   time: 122.91s
+[2024-09-21 17:13:37] Epoch: [093/300] total_loss: 9.11  con_loss_student: 2.81  triple_loss_student: 3.49  global_align_loss: 1.46  low_align_loss: 1.35   time: 129.54s
+[2024-09-21 17:15:44] Epoch: [094/300] total_loss: 9.21  con_loss_student: 2.82  triple_loss_student: 3.56  global_align_loss: 1.49  low_align_loss: 1.34   time: 127.01s
+[2024-09-21 17:17:48] Epoch: [095/300] total_loss: 9.07  con_loss_student: 2.80  triple_loss_student: 3.46  global_align_loss: 1.46  low_align_loss: 1.34   time: 124.17s
+[2024-09-21 17:20:01] Epoch: [096/300] total_loss: 8.90  con_loss_student: 2.76  triple_loss_student: 3.37  global_align_loss: 1.43  low_align_loss: 1.33   time: 133.01s
+[2024-09-21 17:22:01] Epoch: [097/300] total_loss: 8.94  con_loss_student: 2.79  triple_loss_student: 3.38  global_align_loss: 1.44  low_align_loss: 1.33   time: 120.44s
+[2024-09-21 17:24:17] Epoch: [098/300] total_loss: 9.10  con_loss_student: 2.82  triple_loss_student: 3.50  global_align_loss: 1.46  low_align_loss: 1.32   time: 135.40s
+[2024-09-21 17:26:19] Epoch: [099/300] total_loss: 8.92  con_loss_student: 2.78  triple_loss_student: 3.40  global_align_loss: 1.42  low_align_loss: 1.32   time: 121.78s
+[2024-09-21 17:28:30] Epoch: [100/300] total_loss: 8.90  con_loss_student: 2.79  triple_loss_student: 3.38  global_align_loss: 1.42  low_align_loss: 1.31   time: 131.79s
+[2024-09-21 17:30:33] Epoch: [101/300] total_loss: 8.84  con_loss_student: 2.77  triple_loss_student: 3.35  global_align_loss: 1.41  low_align_loss: 1.31   time: 123.13s
+[2024-09-21 17:32:43] Epoch: [102/300] total_loss: 8.97  con_loss_student: 2.82  triple_loss_student: 3.42  global_align_loss: 1.43  low_align_loss: 1.30   time: 129.57s
+[2024-09-21 17:34:47] Epoch: [103/300] total_loss: 8.63  con_loss_student: 2.72  triple_loss_student: 3.24  global_align_loss: 1.38  low_align_loss: 1.30   time: 123.94s
+[2024-09-21 17:36:52] Epoch: [104/300] total_loss: 8.85  con_loss_student: 2.80  triple_loss_student: 3.35  global_align_loss: 1.41  low_align_loss: 1.29   time: 125.10s
+[2024-09-21 17:39:02] Epoch: [105/300] total_loss: 8.82  con_loss_student: 2.80  triple_loss_student: 3.34  global_align_loss: 1.39  low_align_loss: 1.29   time: 129.94s
+[2024-09-21 17:41:03] Epoch: [106/300] total_loss: 8.71  con_loss_student: 2.76  triple_loss_student: 3.27  global_align_loss: 1.39  low_align_loss: 1.29   time: 121.36s
+[2024-09-21 17:43:16] Epoch: [107/300] total_loss: 8.65  con_loss_student: 2.76  triple_loss_student: 3.24  global_align_loss: 1.37  low_align_loss: 1.28   time: 132.39s
+[2024-09-21 17:45:16] Epoch: [108/300] total_loss: 8.54  con_loss_student: 2.73  triple_loss_student: 3.18  global_align_loss: 1.36  low_align_loss: 1.28   time: 120.64s
+[2024-09-21 17:47:28] Epoch: [109/300] total_loss: 8.43  con_loss_student: 2.71  triple_loss_student: 3.11  global_align_loss: 1.34  low_align_loss: 1.28   time: 131.75s
+[2024-09-21 17:49:25] Epoch: [110/300] total_loss: 8.79  con_loss_student: 2.81  triple_loss_student: 3.33  global_align_loss: 1.39  low_align_loss: 1.27   time: 117.01s
+[2024-09-21 17:51:00] Epoch: [111/300] total_loss: 8.63  con_loss_student: 2.78  triple_loss_student: 3.22  global_align_loss: 1.36  low_align_loss: 1.26   time: 94.89s
+[2024-09-21 17:52:28] Epoch: [112/300] total_loss: 8.59  con_loss_student: 2.78  triple_loss_student: 3.20  global_align_loss: 1.36  low_align_loss: 1.26   time: 88.26s
+[2024-09-21 17:54:03] Epoch: [113/300] total_loss: 8.48  con_loss_student: 2.72  triple_loss_student: 3.16  global_align_loss: 1.35  low_align_loss: 1.26   time: 94.78s
+[2024-09-21 17:55:31] Epoch: [114/300] total_loss: 8.37  con_loss_student: 2.72  triple_loss_student: 3.08  global_align_loss: 1.31  low_align_loss: 1.25   time: 87.80s
+[2024-09-21 17:57:09] Epoch: [115/300] total_loss: 8.37  con_loss_student: 2.72  triple_loss_student: 3.08  global_align_loss: 1.32  low_align_loss: 1.25   time: 97.86s
+[2024-09-21 17:58:37] Epoch: [116/300] total_loss: 8.29  con_loss_student: 2.70  triple_loss_student: 3.03  global_align_loss: 1.31  low_align_loss: 1.24   time: 88.27s
+[2024-09-21 18:00:13] Epoch: [117/300] total_loss: 8.45  con_loss_student: 2.76  triple_loss_student: 3.12  global_align_loss: 1.33  low_align_loss: 1.24   time: 95.74s
+[2024-09-21 18:01:41] Epoch: [118/300] total_loss: 8.37  con_loss_student: 2.74  triple_loss_student: 3.08  global_align_loss: 1.32  low_align_loss: 1.24   time: 88.22s
+[2024-09-21 18:03:20] Epoch: [119/300] total_loss: 8.54  con_loss_student: 2.78  triple_loss_student: 3.19  global_align_loss: 1.34  low_align_loss: 1.23   time: 98.96s
+[2024-09-21 18:04:44] Epoch: [120/300] total_loss: 8.34  con_loss_student: 2.74  triple_loss_student: 3.07  global_align_loss: 1.30  low_align_loss: 1.23   time: 84.02s
+[2024-09-21 18:06:21] Epoch: [121/300] total_loss: 8.24  con_loss_student: 2.72  triple_loss_student: 3.01  global_align_loss: 1.29  low_align_loss: 1.22   time: 96.93s
+[2024-09-21 18:07:46] Epoch: [122/300] total_loss: 8.40  con_loss_student: 2.75  triple_loss_student: 3.09  global_align_loss: 1.33  low_align_loss: 1.22   time: 84.84s
+[2024-09-21 18:09:22] Epoch: [123/300] total_loss: 8.32  con_loss_student: 2.75  triple_loss_student: 3.04  global_align_loss: 1.32  low_align_loss: 1.22   time: 96.76s
+[2024-09-21 18:10:50] Epoch: [124/300] total_loss: 8.33  con_loss_student: 2.75  triple_loss_student: 3.05  global_align_loss: 1.32  low_align_loss: 1.21   time: 87.33s
+[2024-09-21 18:12:26] Epoch: [125/300] total_loss: 8.17  con_loss_student: 2.70  triple_loss_student: 2.97  global_align_loss: 1.29  low_align_loss: 1.21   time: 95.74s
+[2024-09-21 18:13:53] Epoch: [126/300] total_loss: 8.36  con_loss_student: 2.76  triple_loss_student: 3.08  global_align_loss: 1.31  low_align_loss: 1.20   time: 87.92s
+[2024-09-21 18:15:28] Epoch: [127/300] total_loss: 8.28  con_loss_student: 2.74  triple_loss_student: 3.03  global_align_loss: 1.31  low_align_loss: 1.20   time: 94.35s
+[2024-09-21 18:16:57] Epoch: [128/300] total_loss: 8.24  con_loss_student: 2.73  triple_loss_student: 3.00  global_align_loss: 1.31  low_align_loss: 1.20   time: 88.82s
+[2024-09-21 18:18:30] Epoch: [129/300] total_loss: 8.25  con_loss_student: 2.75  triple_loss_student: 3.00  global_align_loss: 1.30  low_align_loss: 1.19   time: 92.98s
+[2024-09-21 18:19:58] Epoch: [130/300] total_loss: 8.21  con_loss_student: 2.74  triple_loss_student: 3.00  global_align_loss: 1.28  low_align_loss: 1.19   time: 88.84s
+[2024-09-21 18:21:32] Epoch: [131/300] total_loss: 8.27  con_loss_student: 2.76  triple_loss_student: 3.01  global_align_loss: 1.32  low_align_loss: 1.19   time: 93.32s
+[2024-09-21 18:23:01] Epoch: [132/300] total_loss: 8.16  con_loss_student: 2.74  triple_loss_student: 2.96  global_align_loss: 1.28  low_align_loss: 1.18   time: 89.01s
+[2024-09-21 18:24:35] Epoch: [133/300] total_loss: 8.21  con_loss_student: 2.75  triple_loss_student: 2.98  global_align_loss: 1.31  low_align_loss: 1.18   time: 93.82s
+[2024-09-21 18:26:04] Epoch: [134/300] total_loss: 8.11  con_loss_student: 2.72  triple_loss_student: 2.94  global_align_loss: 1.28  low_align_loss: 1.18   time: 89.54s
+[2024-09-21 18:27:39] Epoch: [135/300] total_loss: 8.14  con_loss_student: 2.73  triple_loss_student: 2.95  global_align_loss: 1.28  low_align_loss: 1.17   time: 95.02s
+[2024-09-21 18:29:08] Epoch: [136/300] total_loss: 8.05  con_loss_student: 2.72  triple_loss_student: 2.90  global_align_loss: 1.26  low_align_loss: 1.17   time: 88.98s
+[2024-09-21 18:30:40] Epoch: [137/300] total_loss: 8.24  con_loss_student: 2.76  triple_loss_student: 3.02  global_align_loss: 1.30  low_align_loss: 1.16   time: 92.27s
+[2024-09-21 18:32:12] Epoch: [138/300] total_loss: 8.14  con_loss_student: 2.75  triple_loss_student: 2.94  global_align_loss: 1.29  low_align_loss: 1.16   time: 91.24s
+[2024-09-21 18:33:45] Epoch: [139/300] total_loss: 8.01  con_loss_student: 2.72  triple_loss_student: 2.87  global_align_loss: 1.26  low_align_loss: 1.16   time: 93.35s
+[2024-09-21 18:35:17] Epoch: [140/300] total_loss: 8.11  con_loss_student: 2.74  triple_loss_student: 2.94  global_align_loss: 1.27  low_align_loss: 1.15   time: 91.56s
+[2024-09-21 18:36:47] Epoch: [141/300] total_loss: 8.05  con_loss_student: 2.73  triple_loss_student: 2.90  global_align_loss: 1.27  low_align_loss: 1.15   time: 90.12s
+[2024-09-21 18:38:19] Epoch: [142/300] total_loss: 7.95  con_loss_student: 2.70  triple_loss_student: 2.84  global_align_loss: 1.26  low_align_loss: 1.15   time: 92.17s
+[2024-09-21 18:40:06] Epoch: [143/300] total_loss: 8.14  con_loss_student: 2.76  triple_loss_student: 2.95  global_align_loss: 1.29  low_align_loss: 1.14   time: 107.10s
+[2024-09-21 18:42:14] Epoch: [144/300] total_loss: 8.10  con_loss_student: 2.75  triple_loss_student: 2.93  global_align_loss: 1.29  low_align_loss: 1.14   time: 128.55s
+[2024-09-21 18:44:23] Epoch: [145/300] total_loss: 8.00  con_loss_student: 2.72  triple_loss_student: 2.86  global_align_loss: 1.27  low_align_loss: 1.14   time: 128.45s
+[2024-09-21 18:46:24] Epoch: [146/300] total_loss: 8.00  con_loss_student: 2.74  triple_loss_student: 2.86  global_align_loss: 1.26  low_align_loss: 1.13   time: 120.80s
+[2024-09-21 18:48:37] Epoch: [147/300] total_loss: 8.09  con_loss_student: 2.75  triple_loss_student: 2.93  global_align_loss: 1.28  low_align_loss: 1.13   time: 133.20s
+[2024-09-21 18:50:38] Epoch: [148/300] total_loss: 7.79  con_loss_student: 2.68  triple_loss_student: 2.74  global_align_loss: 1.25  low_align_loss: 1.13   time: 121.36s
+[2024-09-21 18:52:55] Epoch: [149/300] total_loss: 7.87  con_loss_student: 2.70  triple_loss_student: 2.80  global_align_loss: 1.24  low_align_loss: 1.13   time: 136.21s
+[2024-09-21 18:54:58] Epoch: [150/300] total_loss: 8.01  con_loss_student: 2.76  triple_loss_student: 2.86  global_align_loss: 1.27  low_align_loss: 1.12   time: 123.39s
+**************************[2024-09-21 18:56:42] validate Epoch: [150/300]***************************
+Now mAP: 0.958 recall: 0.9414 precision: 0.9524 | Best mAP: 0.958 recall: 0.9414 precision: 0.9524
+[2024-09-21 18:58:46] Epoch: [151/300] total_loss: 7.73  con_loss_student: 2.67  triple_loss_student: 2.73  global_align_loss: 1.21  low_align_loss: 1.12   time: 123.91s
+**************************[2024-09-21 19:00:33] validate Epoch: [151/300]***************************
+Now mAP: 0.9585 recall: 0.9417 precision: 0.9538 | Best mAP: 0.9585 recall: 0.9417 precision: 0.9538
+[2024-09-21 19:02:38] Epoch: [152/300] total_loss: 7.96  con_loss_student: 2.73  triple_loss_student: 2.85  global_align_loss: 1.26  low_align_loss: 1.12   time: 125.15s
+**************************[2024-09-21 19:04:20] validate Epoch: [152/300]***************************
+Now mAP: 0.9543 recall: 0.9368 precision: 0.9504 | Best mAP: 0.9585 recall: 0.9417 precision: 0.9538
+[2024-09-21 19:06:27] Epoch: [153/300] total_loss: 7.99  con_loss_student: 2.74  triple_loss_student: 2.87  global_align_loss: 1.26  low_align_loss: 1.11   time: 126.81s
+**************************[2024-09-21 19:08:06] validate Epoch: [153/300]***************************
+Now mAP: 0.9591 recall: 0.9421 precision: 0.9537 | Best mAP: 0.9591 recall: 0.9421 precision: 0.9537
+[2024-09-21 19:10:17] Epoch: [154/300] total_loss: 7.97  con_loss_student: 2.75  triple_loss_student: 2.85  global_align_loss: 1.27  low_align_loss: 1.11   time: 130.43s
+**************************[2024-09-21 19:11:56] validate Epoch: [154/300]***************************
+Now mAP: 0.9595 recall: 0.9426 precision: 0.9544 | Best mAP: 0.9595 recall: 0.9426 precision: 0.9544
+[2024-09-21 19:14:05] Epoch: [155/300] total_loss: 7.85  con_loss_student: 2.71  triple_loss_student: 2.78  global_align_loss: 1.26  low_align_loss: 1.11   time: 129.16s
+**************************[2024-09-21 19:15:47] validate Epoch: [155/300]***************************
+Now mAP: 0.9594 recall: 0.9429 precision: 0.9544 | Best mAP: 0.9595 recall: 0.9426 precision: 0.9544
+[2024-09-21 19:17:56] Epoch: [156/300] total_loss: 7.79  con_loss_student: 2.69  triple_loss_student: 2.76  global_align_loss: 1.24  low_align_loss: 1.10   time: 128.56s
+**************************[2024-09-21 19:19:33] validate Epoch: [156/300]***************************
+Now mAP: 0.9586 recall: 0.9419 precision: 0.9533 | Best mAP: 0.9595 recall: 0.9426 precision: 0.9544
+[2024-09-21 19:21:46] Epoch: [157/300] total_loss: 7.84  con_loss_student: 2.72  triple_loss_student: 2.78  global_align_loss: 1.23  low_align_loss: 1.10   time: 132.57s
+**************************[2024-09-21 19:23:24] validate Epoch: [157/300]***************************
+Now mAP: 0.9565 recall: 0.9389 precision: 0.9508 | Best mAP: 0.9595 recall: 0.9426 precision: 0.9544
+[2024-09-21 19:25:37] Epoch: [158/300] total_loss: 7.88  con_loss_student: 2.72  triple_loss_student: 2.80  global_align_loss: 1.26  low_align_loss: 1.10   time: 132.53s
+**************************[2024-09-21 19:27:19] validate Epoch: [158/300]***************************
+Now mAP: 0.959 recall: 0.9419 precision: 0.9529 | Best mAP: 0.9595 recall: 0.9426 precision: 0.9544
+[2024-09-21 19:29:31] Epoch: [159/300] total_loss: 7.90  con_loss_student: 2.73  triple_loss_student: 2.82  global_align_loss: 1.27  low_align_loss: 1.09   time: 131.68s
+**************************[2024-09-21 19:31:19] validate Epoch: [159/300]***************************
+Now mAP: 0.9565 recall: 0.9394 precision: 0.9519 | Best mAP: 0.9595 recall: 0.9426 precision: 0.9544
+[2024-09-21 19:33:33] Epoch: [160/300] total_loss: 7.99  con_loss_student: 2.77  triple_loss_student: 2.86  global_align_loss: 1.28  low_align_loss: 1.09   time: 134.17s
+**************************[2024-09-21 19:35:19] validate Epoch: [160/300]***************************
+Now mAP: 0.9591 recall: 0.9427 precision: 0.9541 | Best mAP: 0.9595 recall: 0.9426 precision: 0.9544
+[2024-09-21 19:37:31] Epoch: [161/300] total_loss: 7.89  con_loss_student: 2.75  triple_loss_student: 2.81  global_align_loss: 1.24  low_align_loss: 1.09   time: 131.64s
+**************************[2024-09-21 19:39:09] validate Epoch: [161/300]***************************
+Now mAP: 0.9589 recall: 0.9424 precision: 0.954 | Best mAP: 0.9595 recall: 0.9426 precision: 0.9544
+[2024-09-21 19:41:22] Epoch: [162/300] total_loss: 7.63  con_loss_student: 2.67  triple_loss_student: 2.67  global_align_loss: 1.20  low_align_loss: 1.09   time: 132.65s
+**************************[2024-09-21 19:42:59] validate Epoch: [162/300]***************************
+Now mAP: 0.958 recall: 0.9407 precision: 0.9527 | Best mAP: 0.9595 recall: 0.9426 precision: 0.9544
+[2024-09-21 19:45:11] Epoch: [163/300] total_loss: 7.75  con_loss_student: 2.70  triple_loss_student: 2.73  global_align_loss: 1.23  low_align_loss: 1.08   time: 131.95s
+**************************[2024-09-21 19:46:48] validate Epoch: [163/300]***************************
+Now mAP: 0.9607 recall: 0.944 precision: 0.9547 | Best mAP: 0.9607 recall: 0.944 precision: 0.9547
+[2024-09-21 19:48:59] Epoch: [164/300] total_loss: 7.84  con_loss_student: 2.73  triple_loss_student: 2.79  global_align_loss: 1.24  low_align_loss: 1.08   time: 131.21s
+**************************[2024-09-21 19:50:35] validate Epoch: [164/300]***************************
+Now mAP: 0.9603 recall: 0.9441 precision: 0.9547 | Best mAP: 0.9607 recall: 0.944 precision: 0.9547
+[2024-09-21 19:52:49] Epoch: [165/300] total_loss: 7.77  con_loss_student: 2.70  triple_loss_student: 2.75  global_align_loss: 1.25  low_align_loss: 1.08   time: 134.37s
+**************************[2024-09-21 19:54:27] validate Epoch: [165/300]***************************
+Now mAP: 0.9609 recall: 0.9452 precision: 0.9554 | Best mAP: 0.9609 recall: 0.9452 precision: 0.9554
+[2024-09-21 19:56:39] Epoch: [166/300] total_loss: 7.66  con_loss_student: 2.69  triple_loss_student: 2.69  global_align_loss: 1.22  low_align_loss: 1.07   time: 131.99s
+**************************[2024-09-21 19:58:19] validate Epoch: [166/300]***************************
+Now mAP: 0.9569 recall: 0.9397 precision: 0.9523 | Best mAP: 0.9609 recall: 0.9452 precision: 0.9554
+[2024-09-21 20:00:33] Epoch: [167/300] total_loss: 7.88  con_loss_student: 2.75  triple_loss_student: 2.80  global_align_loss: 1.26  low_align_loss: 1.07   time: 133.94s
+**************************[2024-09-21 20:02:05] validate Epoch: [167/300]***************************
+Now mAP: 0.9616 recall: 0.9458 precision: 0.9565 | Best mAP: 0.9616 recall: 0.9458 precision: 0.9565
+[2024-09-21 20:04:19] Epoch: [168/300] total_loss: 7.60  con_loss_student: 2.68  triple_loss_student: 2.65  global_align_loss: 1.21  low_align_loss: 1.07   time: 133.78s
+**************************[2024-09-21 20:05:53] validate Epoch: [168/300]***************************
+Now mAP: 0.9606 recall: 0.9441 precision: 0.9555 | Best mAP: 0.9616 recall: 0.9458 precision: 0.9565
+[2024-09-21 20:08:07] Epoch: [169/300] total_loss: 7.81  con_loss_student: 2.73  triple_loss_student: 2.76  global_align_loss: 1.25  low_align_loss: 1.06   time: 133.77s
+**************************[2024-09-21 20:09:42] validate Epoch: [169/300]***************************
+Now mAP: 0.9595 recall: 0.9434 precision: 0.9542 | Best mAP: 0.9616 recall: 0.9458 precision: 0.9565
+[2024-09-21 20:11:56] Epoch: [170/300] total_loss: 7.82  con_loss_student: 2.73  triple_loss_student: 2.79  global_align_loss: 1.25  low_align_loss: 1.06   time: 133.52s
+**************************[2024-09-21 20:13:35] validate Epoch: [170/300]***************************
+Now mAP: 0.9613 recall: 0.9448 precision: 0.9557 | Best mAP: 0.9616 recall: 0.9458 precision: 0.9565
+[2024-09-21 20:15:49] Epoch: [171/300] total_loss: 7.78  con_loss_student: 2.71  triple_loss_student: 2.76  global_align_loss: 1.25  low_align_loss: 1.06   time: 134.16s
+**************************[2024-09-21 20:17:24] validate Epoch: [171/300]***************************
+Now mAP: 0.9593 recall: 0.9423 precision: 0.954 | Best mAP: 0.9616 recall: 0.9458 precision: 0.9565
+[2024-09-21 20:19:39] Epoch: [172/300] total_loss: 7.73  con_loss_student: 2.72  triple_loss_student: 2.71  global_align_loss: 1.24  low_align_loss: 1.06   time: 134.46s
+**************************[2024-09-21 20:21:16] validate Epoch: [172/300]***************************
+Now mAP: 0.9585 recall: 0.9414 precision: 0.9526 | Best mAP: 0.9616 recall: 0.9458 precision: 0.9565
+[2024-09-21 20:23:30] Epoch: [173/300] total_loss: 7.66  con_loss_student: 2.71  triple_loss_student: 2.67  global_align_loss: 1.22  low_align_loss: 1.05   time: 134.46s
+**************************[2024-09-21 20:25:06] validate Epoch: [173/300]***************************
+Now mAP: 0.9613 recall: 0.9452 precision: 0.9561 | Best mAP: 0.9616 recall: 0.9458 precision: 0.9565
+[2024-09-21 20:27:21] Epoch: [174/300] total_loss: 7.57  con_loss_student: 2.66  triple_loss_student: 2.64  global_align_loss: 1.22  low_align_loss: 1.05   time: 135.18s
+**************************[2024-09-21 20:28:56] validate Epoch: [174/300]***************************
+Now mAP: 0.9614 recall: 0.9459 precision: 0.9565 | Best mAP: 0.9616 recall: 0.9458 precision: 0.9565
+[2024-09-21 20:31:11] Epoch: [175/300] total_loss: 7.74  con_loss_student: 2.70  triple_loss_student: 2.75  global_align_loss: 1.25  low_align_loss: 1.05   time: 134.88s
+**************************[2024-09-21 20:32:46] validate Epoch: [175/300]***************************
+Now mAP: 0.9616 recall: 0.9458 precision: 0.956 | Best mAP: 0.9616 recall: 0.9458 precision: 0.9565
+[2024-09-21 20:34:59] Epoch: [176/300] total_loss: 7.73  con_loss_student: 2.71  triple_loss_student: 2.74  global_align_loss: 1.24  low_align_loss: 1.05   time: 132.88s
+**************************[2024-09-21 20:36:39] validate Epoch: [176/300]***************************
+Now mAP: 0.9615 recall: 0.9456 precision: 0.9563 | Best mAP: 0.9616 recall: 0.9458 precision: 0.9565
+[2024-09-21 20:38:52] Epoch: [177/300] total_loss: 7.67  con_loss_student: 2.70  triple_loss_student: 2.69  global_align_loss: 1.24  low_align_loss: 1.04   time: 132.75s
+**************************[2024-09-21 20:40:33] validate Epoch: [177/300]***************************
+Now mAP: 0.9612 recall: 0.9456 precision: 0.956 | Best mAP: 0.9616 recall: 0.9458 precision: 0.9565
+[2024-09-21 20:42:47] Epoch: [178/300] total_loss: 7.47  con_loss_student: 2.67  triple_loss_student: 2.58  global_align_loss: 1.19  low_align_loss: 1.04   time: 134.09s
+**************************[2024-09-21 20:44:27] validate Epoch: [178/300]***************************
+Now mAP: 0.962 recall: 0.9464 precision: 0.9573 | Best mAP: 0.962 recall: 0.9464 precision: 0.9573
+[2024-09-21 20:46:41] Epoch: [179/300] total_loss: 7.69  con_loss_student: 2.72  triple_loss_student: 2.69  global_align_loss: 1.25  low_align_loss: 1.04   time: 134.15s
+**************************[2024-09-21 20:48:20] validate Epoch: [179/300]***************************
+Now mAP: 0.9614 recall: 0.9451 precision: 0.9552 | Best mAP: 0.962 recall: 0.9464 precision: 0.9573
+[2024-09-21 20:50:32] Epoch: [180/300] total_loss: 7.69  con_loss_student: 2.71  triple_loss_student: 2.71  global_align_loss: 1.25  low_align_loss: 1.03   time: 132.44s
+**************************[2024-09-21 20:52:07] validate Epoch: [180/300]***************************
+Now mAP: 0.9613 recall: 0.9455 precision: 0.956 | Best mAP: 0.962 recall: 0.9464 precision: 0.9573
+[2024-09-21 20:54:20] Epoch: [181/300] total_loss: 7.81  con_loss_student: 2.74  triple_loss_student: 2.76  global_align_loss: 1.28  low_align_loss: 1.03   time: 132.66s
+**************************[2024-09-21 20:55:59] validate Epoch: [181/300]***************************
+Now mAP: 0.961 recall: 0.9448 precision: 0.9557 | Best mAP: 0.962 recall: 0.9464 precision: 0.9573
+[2024-09-21 20:58:14] Epoch: [182/300] total_loss: 7.80  con_loss_student: 2.73  triple_loss_student: 2.76  global_align_loss: 1.27  low_align_loss: 1.03   time: 135.24s
+**************************[2024-09-21 20:59:55] validate Epoch: [182/300]***************************
+Now mAP: 0.9596 recall: 0.9432 precision: 0.9541 | Best mAP: 0.962 recall: 0.9464 precision: 0.9573
+[2024-09-21 21:02:11] Epoch: [183/300] total_loss: 7.80  con_loss_student: 2.76  triple_loss_student: 2.76  global_align_loss: 1.25  low_align_loss: 1.03   time: 136.30s
+**************************[2024-09-21 21:04:01] validate Epoch: [183/300]***************************
+Now mAP: 0.9619 recall: 0.9462 precision: 0.9563 | Best mAP: 0.962 recall: 0.9464 precision: 0.9573
+[2024-09-21 21:06:16] Epoch: [184/300] total_loss: 7.71  con_loss_student: 2.74  triple_loss_student: 2.71  global_align_loss: 1.25  low_align_loss: 1.02   time: 134.33s
+**************************[2024-09-21 21:07:52] validate Epoch: [184/300]***************************
+Now mAP: 0.9591 recall: 0.9428 precision: 0.9537 | Best mAP: 0.962 recall: 0.9464 precision: 0.9573
+[2024-09-21 21:10:06] Epoch: [185/300] total_loss: 7.65  con_loss_student: 2.71  triple_loss_student: 2.69  global_align_loss: 1.24  low_align_loss: 1.02   time: 133.88s
+**************************[2024-09-21 21:11:56] validate Epoch: [185/300]***************************
+Now mAP: 0.9613 recall: 0.945 precision: 0.9561 | Best mAP: 0.962 recall: 0.9464 precision: 0.9573
+[2024-09-21 21:14:11] Epoch: [186/300] total_loss: 7.48  con_loss_student: 2.67  triple_loss_student: 2.58  global_align_loss: 1.21  low_align_loss: 1.02   time: 134.69s
+**************************[2024-09-21 21:15:57] validate Epoch: [186/300]***************************
+Now mAP: 0.9612 recall: 0.9456 precision: 0.9564 | Best mAP: 0.962 recall: 0.9464 precision: 0.9573
+[2024-09-21 21:18:15] Epoch: [187/300] total_loss: 7.73  con_loss_student: 2.73  triple_loss_student: 2.73  global_align_loss: 1.26  low_align_loss: 1.02   time: 137.13s
+**************************[2024-09-21 21:20:03] validate Epoch: [187/300]***************************
+Now mAP: 0.9612 recall: 0.9457 precision: 0.9561 | Best mAP: 0.962 recall: 0.9464 precision: 0.9573
+[2024-09-21 21:22:21] Epoch: [188/300] total_loss: 7.52  con_loss_student: 2.68  triple_loss_student: 2.60  global_align_loss: 1.22  low_align_loss: 1.01   time: 137.34s
+**************************[2024-09-21 21:24:10] validate Epoch: [188/300]***************************
+Now mAP: 0.9609 recall: 0.945 precision: 0.9557 | Best mAP: 0.962 recall: 0.9464 precision: 0.9573
+[2024-09-21 21:26:18] Epoch: [189/300] total_loss: 7.55  con_loss_student: 2.68  triple_loss_student: 2.63  global_align_loss: 1.23  low_align_loss: 1.01   time: 128.68s
+**************************[2024-09-21 21:27:54] validate Epoch: [189/300]***************************
+Now mAP: 0.9616 recall: 0.9455 precision: 0.9562 | Best mAP: 0.962 recall: 0.9464 precision: 0.9573
+[2024-09-21 21:29:34] Epoch: [190/300] total_loss: 7.76  con_loss_student: 2.75  triple_loss_student: 2.75  global_align_loss: 1.26  low_align_loss: 1.01   time: 100.71s
+**************************[2024-09-21 21:31:07] validate Epoch: [190/300]***************************
+Now mAP: 0.96  recall: 0.9437 precision: 0.9552 | Best mAP: 0.962 recall: 0.9464 precision: 0.9573
+[2024-09-21 21:32:47] Epoch: [191/300] total_loss: 7.75  con_loss_student: 2.74  triple_loss_student: 2.75  global_align_loss: 1.26  low_align_loss: 1.01   time: 100.70s
+**************************[2024-09-21 21:34:22] validate Epoch: [191/300]***************************
+Now mAP: 0.962 recall: 0.9464 precision: 0.9563 | Best mAP: 0.962 recall: 0.9464 precision: 0.9563
+[2024-09-21 21:35:58] Epoch: [192/300] total_loss: 7.54  con_loss_student: 2.69  triple_loss_student: 2.60  global_align_loss: 1.24  low_align_loss: 1.00   time: 96.35s
+**************************[2024-09-21 21:37:40] validate Epoch: [192/300]***************************
+Now mAP: 0.9613 recall: 0.9446 precision: 0.9556 | Best mAP: 0.962 recall: 0.9464 precision: 0.9563
+[2024-09-21 21:39:19] Epoch: [193/300] total_loss: 7.55  con_loss_student: 2.69  triple_loss_student: 2.63  global_align_loss: 1.24  low_align_loss: 1.00   time: 98.10s
+**************************[2024-09-21 21:40:53] validate Epoch: [193/300]***************************
+Now mAP: 0.9629 recall: 0.9478 precision: 0.9577 | Best mAP: 0.9629 recall: 0.9478 precision: 0.9577
+[2024-09-21 21:42:30] Epoch: [194/300] total_loss: 7.62  con_loss_student: 2.70  triple_loss_student: 2.66  global_align_loss: 1.27  low_align_loss: 1.00   time: 97.39s
+**************************[2024-09-21 21:44:06] validate Epoch: [194/300]***************************
+Now mAP: 0.9597 recall: 0.9433 precision: 0.955 | Best mAP: 0.9629 recall: 0.9478 precision: 0.9577
+[2024-09-21 21:45:41] Epoch: [195/300] total_loss: 7.66  con_loss_student: 2.72  triple_loss_student: 2.68  global_align_loss: 1.26  low_align_loss: 1.00   time: 95.55s
+**************************[2024-09-21 21:47:17] validate Epoch: [195/300]***************************
+Now mAP: 0.9604 recall: 0.9445 precision: 0.9552 | Best mAP: 0.9629 recall: 0.9478 precision: 0.9577
+[2024-09-21 21:48:53] Epoch: [196/300] total_loss: 7.46  con_loss_student: 2.66  triple_loss_student: 2.57  global_align_loss: 1.23  low_align_loss: 1.00   time: 96.90s
+**************************[2024-09-21 21:50:29] validate Epoch: [196/300]***************************
+Now mAP: 0.9619 recall: 0.946 precision: 0.9565 | Best mAP: 0.9629 recall: 0.9478 precision: 0.9577
+[2024-09-21 21:52:05] Epoch: [197/300] total_loss: 7.63  con_loss_student: 2.71  triple_loss_student: 2.67  global_align_loss: 1.25  low_align_loss: 0.99   time: 96.42s
+**************************[2024-09-21 21:53:40] validate Epoch: [197/300]***************************
+Now mAP: 0.9621 recall: 0.9462 precision: 0.9574 | Best mAP: 0.9629 recall: 0.9478 precision: 0.9577
+[2024-09-21 21:55:13] Epoch: [198/300] total_loss: 7.61  con_loss_student: 2.73  triple_loss_student: 2.64  global_align_loss: 1.25  low_align_loss: 0.99   time: 93.13s
+**************************[2024-09-21 21:56:51] validate Epoch: [198/300]***************************
+Now mAP: 0.9612 recall: 0.9455 precision: 0.9555 | Best mAP: 0.9629 recall: 0.9478 precision: 0.9577
+[2024-09-21 21:58:22] Epoch: [199/300] total_loss: 7.62  con_loss_student: 2.72  triple_loss_student: 2.66  global_align_loss: 1.26  low_align_loss: 0.99   time: 91.30s
+**************************[2024-09-21 21:59:59] validate Epoch: [199/300]***************************
+Now mAP: 0.9613 recall: 0.9446 precision: 0.9562 | Best mAP: 0.9629 recall: 0.9478 precision: 0.9577
+[2024-09-21 22:01:29] Epoch: [200/300] total_loss: 7.53  con_loss_student: 2.71  triple_loss_student: 2.60  global_align_loss: 1.23  low_align_loss: 0.99   time: 90.15s
+**************************[2024-09-21 22:03:03] validate Epoch: [200/300]***************************
+Now mAP: 0.9609 recall: 0.9444 precision: 0.9553 | Best mAP: 0.9629 recall: 0.9478 precision: 0.9577
+[2024-09-21 22:04:33] Epoch: [201/300] total_loss: 7.55  con_loss_student: 2.70  triple_loss_student: 2.62  global_align_loss: 1.24  low_align_loss: 0.98   time: 90.07s
+**************************[2024-09-21 22:06:10] validate Epoch: [201/300]***************************
+Now mAP: 0.9599 recall: 0.943 precision: 0.9542 | Best mAP: 0.9629 recall: 0.9478 precision: 0.9577
+[2024-09-21 22:07:42] Epoch: [202/300] total_loss: 7.62  con_loss_student: 2.72  triple_loss_student: 2.66  global_align_loss: 1.26  low_align_loss: 0.98   time: 92.44s
+**************************[2024-09-21 22:09:19] validate Epoch: [202/300]***************************
+Now mAP: 0.9603 recall: 0.9436 precision: 0.9545 | Best mAP: 0.9629 recall: 0.9478 precision: 0.9577
+[2024-09-21 22:10:51] Epoch: [203/300] total_loss: 7.48  con_loss_student: 2.67  triple_loss_student: 2.59  global_align_loss: 1.24  low_align_loss: 0.98   time: 92.66s
+**************************[2024-09-21 22:12:27] validate Epoch: [203/300]***************************
+Now mAP: 0.9611 recall: 0.9453 precision: 0.9552 | Best mAP: 0.9629 recall: 0.9478 precision: 0.9577
+[2024-09-21 22:14:02] Epoch: [204/300] total_loss: 7.37  con_loss_student: 2.66  triple_loss_student: 2.51  global_align_loss: 1.22  low_align_loss: 0.98   time: 94.34s
+**************************[2024-09-21 22:15:37] validate Epoch: [204/300]***************************
+Now mAP: 0.961 recall: 0.9444 precision: 0.9555 | Best mAP: 0.9629 recall: 0.9478 precision: 0.9577
+[2024-09-21 22:17:11] Epoch: [205/300] total_loss: 7.60  con_loss_student: 2.72  triple_loss_student: 2.64  global_align_loss: 1.27  low_align_loss: 0.97   time: 94.57s
+**************************[2024-09-21 22:18:49] validate Epoch: [205/300]***************************
+Now mAP: 0.9606 recall: 0.9438 precision: 0.9552 | Best mAP: 0.9629 recall: 0.9478 precision: 0.9577
+[2024-09-21 22:20:24] Epoch: [206/300] total_loss: 7.61  con_loss_student: 2.72  triple_loss_student: 2.66  global_align_loss: 1.25  low_align_loss: 0.97   time: 95.34s
+**************************[2024-09-21 22:22:02] validate Epoch: [206/300]***************************
+Now mAP: 0.9602 recall: 0.9442 precision: 0.9552 | Best mAP: 0.9629 recall: 0.9478 precision: 0.9577
+[2024-09-21 22:23:37] Epoch: [207/300] total_loss: 7.56  con_loss_student: 2.70  triple_loss_student: 2.63  global_align_loss: 1.27  low_align_loss: 0.97   time: 95.43s
+**************************[2024-09-21 22:25:18] validate Epoch: [207/300]***************************
+Now mAP: 0.9601 recall: 0.9437 precision: 0.9553 | Best mAP: 0.9629 recall: 0.9478 precision: 0.9577
+[2024-09-21 22:26:55] Epoch: [208/300] total_loss: 7.46  con_loss_student: 2.67  triple_loss_student: 2.58  global_align_loss: 1.24  low_align_loss: 0.97   time: 96.67s
+**************************[2024-09-21 22:28:32] validate Epoch: [208/300]***************************
+Now mAP: 0.9633 recall: 0.9477 precision: 0.9577 | Best mAP: 0.9633 recall: 0.9477 precision: 0.9577
+[2024-09-21 22:30:08] Epoch: [209/300] total_loss: 7.68  con_loss_student: 2.74  triple_loss_student: 2.71  global_align_loss: 1.26  low_align_loss: 0.96   time: 95.87s
+**************************[2024-09-21 22:31:43] validate Epoch: [209/300]***************************
+Now mAP: 0.9602 recall: 0.9437 precision: 0.9551 | Best mAP: 0.9633 recall: 0.9477 precision: 0.9577
+[2024-09-21 22:33:20] Epoch: [210/300] total_loss: 7.64  con_loss_student: 2.73  triple_loss_student: 2.67  global_align_loss: 1.28  low_align_loss: 0.96   time: 96.83s
+**************************[2024-09-21 22:34:55] validate Epoch: [210/300]***************************
+Now mAP: 0.9619 recall: 0.9464 precision: 0.9561 | Best mAP: 0.9633 recall: 0.9477 precision: 0.9577
+[2024-09-21 22:36:31] Epoch: [211/300] total_loss: 7.76  con_loss_student: 2.78  triple_loss_student: 2.73  global_align_loss: 1.29  low_align_loss: 0.96   time: 95.76s
+**************************[2024-09-21 22:38:07] validate Epoch: [211/300]***************************
+Now mAP: 0.9601 recall: 0.9438 precision: 0.9543 | Best mAP: 0.9633 recall: 0.9477 precision: 0.9577
+[2024-09-21 22:39:43] Epoch: [212/300] total_loss: 7.68  con_loss_student: 2.75  triple_loss_student: 2.68  global_align_loss: 1.29  low_align_loss: 0.96   time: 96.77s
+**************************[2024-09-21 22:41:16] validate Epoch: [212/300]***************************
+Now mAP: 0.9614 recall: 0.9451 precision: 0.9548 | Best mAP: 0.9633 recall: 0.9477 precision: 0.9577
+[2024-09-21 22:42:53] Epoch: [213/300] total_loss: 7.59  con_loss_student: 2.72  triple_loss_student: 2.65  global_align_loss: 1.26  low_align_loss: 0.96   time: 96.47s
+**************************[2024-09-21 22:44:26] validate Epoch: [213/300]***************************
+Now mAP: 0.9608 recall: 0.9444 precision: 0.955 | Best mAP: 0.9633 recall: 0.9477 precision: 0.9577
+[2024-09-21 22:46:02] Epoch: [214/300] total_loss: 7.64  con_loss_student: 2.73  triple_loss_student: 2.69  global_align_loss: 1.28  low_align_loss: 0.95   time: 96.53s
+**************************[2024-09-21 22:47:35] validate Epoch: [214/300]***************************
+Now mAP: 0.961 recall: 0.9452 precision: 0.9563 | Best mAP: 0.9633 recall: 0.9477 precision: 0.9577
+[2024-09-21 22:49:12] Epoch: [215/300] total_loss: 7.56  con_loss_student: 2.70  triple_loss_student: 2.63  global_align_loss: 1.27  low_align_loss: 0.95   time: 96.50s
+**************************[2024-09-21 22:50:46] validate Epoch: [215/300]***************************
+Now mAP: 0.9611 recall: 0.9448 precision: 0.9557 | Best mAP: 0.9633 recall: 0.9477 precision: 0.9577
+[2024-09-21 22:52:22] Epoch: [216/300] total_loss: 7.55  con_loss_student: 2.71  triple_loss_student: 2.62  global_align_loss: 1.27  low_align_loss: 0.95   time: 96.02s
+**************************[2024-09-21 22:53:59] validate Epoch: [216/300]***************************
+Now mAP: 0.9606 recall: 0.9436 precision: 0.9546 | Best mAP: 0.9633 recall: 0.9477 precision: 0.9577
+[2024-09-21 22:55:37] Epoch: [217/300] total_loss: 7.76  con_loss_student: 2.75  triple_loss_student: 2.75  global_align_loss: 1.31  low_align_loss: 0.95   time: 97.53s
+**************************[2024-09-21 22:57:17] validate Epoch: [217/300]***************************
+Now mAP: 0.9599 recall: 0.9428 precision: 0.9542 | Best mAP: 0.9633 recall: 0.9477 precision: 0.9577
+[2024-09-21 22:58:54] Epoch: [218/300] total_loss: 7.68  con_loss_student: 2.75  triple_loss_student: 2.69  global_align_loss: 1.31  low_align_loss: 0.95   time: 96.36s
+**************************[2024-09-21 23:00:32] validate Epoch: [218/300]***************************
+Now mAP: 0.9601 recall: 0.9435 precision: 0.9541 | Best mAP: 0.9633 recall: 0.9477 precision: 0.9577
+[2024-09-21 23:02:13] Epoch: [219/300] total_loss: 7.68  con_loss_student: 2.72  triple_loss_student: 2.71  global_align_loss: 1.31  low_align_loss: 0.94   time: 100.62s
+**************************[2024-09-21 23:03:46] validate Epoch: [219/300]***************************
+Now mAP: 0.9603 recall: 0.9438 precision: 0.9547 | Best mAP: 0.9633 recall: 0.9477 precision: 0.9577
+[2024-09-21 23:05:24] Epoch: [220/300] total_loss: 7.65  con_loss_student: 2.74  triple_loss_student: 2.68  global_align_loss: 1.29  low_align_loss: 0.94   time: 97.60s
+**************************[2024-09-21 23:07:03] validate Epoch: [220/300]***************************
+Now mAP: 0.961 recall: 0.9447 precision: 0.9551 | Best mAP: 0.9633 recall: 0.9477 precision: 0.9577
+[2024-09-21 23:08:41] Epoch: [221/300] total_loss: 7.46  con_loss_student: 2.68  triple_loss_student: 2.57  global_align_loss: 1.26  low_align_loss: 0.94   time: 97.81s
+**************************[2024-09-21 23:10:19] validate Epoch: [221/300]***************************
+Now mAP: 0.9622 recall: 0.9461 precision: 0.9563 | Best mAP: 0.9633 recall: 0.9477 precision: 0.9577
+[2024-09-21 23:11:58] Epoch: [222/300] total_loss: 7.55  con_loss_student: 2.71  triple_loss_student: 2.63  global_align_loss: 1.27  low_align_loss: 0.94   time: 98.94s
+**************************[2024-09-21 23:13:35] validate Epoch: [222/300]***************************
+Now mAP: 0.9629 recall: 0.9474 precision: 0.957 | Best mAP: 0.9633 recall: 0.9477 precision: 0.9577
+[2024-09-21 23:15:13] Epoch: [223/300] total_loss: 7.55  con_loss_student: 2.68  triple_loss_student: 2.64  global_align_loss: 1.29  low_align_loss: 0.93   time: 98.05s
+**************************[2024-09-21 23:16:49] validate Epoch: [223/300]***************************
+Now mAP: 0.9613 recall: 0.9453 precision: 0.9556 | Best mAP: 0.9633 recall: 0.9477 precision: 0.9577
+[2024-09-21 23:18:32] Epoch: [224/300] total_loss: 7.59  con_loss_student: 2.71  triple_loss_student: 2.65  global_align_loss: 1.29  low_align_loss: 0.93   time: 103.36s
+**************************[2024-09-21 23:20:10] validate Epoch: [224/300]***************************
+Now mAP: 0.9621 recall: 0.9463 precision: 0.9568 | Best mAP: 0.9633 recall: 0.9477 precision: 0.9577
+[2024-09-21 23:21:49] Epoch: [225/300] total_loss: 7.62  con_loss_student: 2.74  triple_loss_student: 2.65  global_align_loss: 1.30  low_align_loss: 0.93   time: 99.59s
+**************************[2024-09-21 23:23:25] validate Epoch: [225/300]***************************
+Now mAP: 0.9628 recall: 0.9472 precision: 0.9574 | Best mAP: 0.9633 recall: 0.9477 precision: 0.9577
+[2024-09-21 23:25:04] Epoch: [226/300] total_loss: 7.44  con_loss_student: 2.67  triple_loss_student: 2.57  global_align_loss: 1.27  low_align_loss: 0.93   time: 98.82s
+**************************[2024-09-21 23:26:35] validate Epoch: [226/300]***************************
+Now mAP: 0.9615 recall: 0.9454 precision: 0.9558 | Best mAP: 0.9633 recall: 0.9477 precision: 0.9577
+[2024-09-21 23:28:13] Epoch: [227/300] total_loss: 7.54  con_loss_student: 2.72  triple_loss_student: 2.62  global_align_loss: 1.28  low_align_loss: 0.93   time: 97.16s
+**************************[2024-09-21 23:29:47] validate Epoch: [227/300]***************************
+Now mAP: 0.9638 recall: 0.9487 precision: 0.9581 | Best mAP: 0.9638 recall: 0.9487 precision: 0.9581
+[2024-09-21 23:31:23] Epoch: [228/300] total_loss: 7.62  con_loss_student: 2.72  triple_loss_student: 2.66  global_align_loss: 1.31  low_align_loss: 0.92   time: 96.46s
+**************************[2024-09-21 23:33:00] validate Epoch: [228/300]***************************
+Now mAP: 0.9608 recall: 0.945 precision: 0.9561 | Best mAP: 0.9638 recall: 0.9487 precision: 0.9581
+[2024-09-21 23:34:40] Epoch: [229/300] total_loss: 7.73  con_loss_student: 2.75  triple_loss_student: 2.73  global_align_loss: 1.33  low_align_loss: 0.92   time: 99.82s
+**************************[2024-09-21 23:36:13] validate Epoch: [229/300]***************************
+Now mAP: 0.9631 recall: 0.9482 precision: 0.9577 | Best mAP: 0.9638 recall: 0.9487 precision: 0.9581
+[2024-09-21 23:37:49] Epoch: [230/300] total_loss: 7.62  con_loss_student: 2.73  triple_loss_student: 2.67  global_align_loss: 1.30  low_align_loss: 0.92   time: 96.75s
+**************************[2024-09-21 23:39:24] validate Epoch: [230/300]***************************
+Now mAP: 0.9617 recall: 0.9462 precision: 0.9566 | Best mAP: 0.9638 recall: 0.9487 precision: 0.9581
+[2024-09-21 23:41:01] Epoch: [231/300] total_loss: 7.58  con_loss_student: 2.71  triple_loss_student: 2.65  global_align_loss: 1.30  low_align_loss: 0.92   time: 97.41s
+**************************[2024-09-21 23:42:39] validate Epoch: [231/300]***************************
+Now mAP: 0.963 recall: 0.9471 precision: 0.9568 | Best mAP: 0.9638 recall: 0.9487 precision: 0.9581
+[2024-09-21 23:44:17] Epoch: [232/300] total_loss: 7.58  con_loss_student: 2.71  triple_loss_student: 2.64  global_align_loss: 1.31  low_align_loss: 0.92   time: 97.87s
+**************************[2024-09-21 23:45:47] validate Epoch: [232/300]***************************
+Now mAP: 0.9631 recall: 0.9474 precision: 0.9573 | Best mAP: 0.9638 recall: 0.9487 precision: 0.9581
+[2024-09-21 23:47:21] Epoch: [233/300] total_loss: 7.72  con_loss_student: 2.75  triple_loss_student: 2.73  global_align_loss: 1.32  low_align_loss: 0.91   time: 94.20s
+**************************[2024-09-21 23:48:58] validate Epoch: [233/300]***************************
+Now mAP: 0.9622 recall: 0.947 precision: 0.957 | Best mAP: 0.9638 recall: 0.9487 precision: 0.9581
+[2024-09-21 23:50:32] Epoch: [234/300] total_loss: 7.68  con_loss_student: 2.74  triple_loss_student: 2.70  global_align_loss: 1.32  low_align_loss: 0.91   time: 93.49s
+**************************[2024-09-21 23:52:09] validate Epoch: [234/300]***************************
+Now mAP: 0.9631 recall: 0.9479 precision: 0.9574 | Best mAP: 0.9638 recall: 0.9487 precision: 0.9581
+[2024-09-21 23:53:43] Epoch: [235/300] total_loss: 7.73  con_loss_student: 2.76  triple_loss_student: 2.72  global_align_loss: 1.34  low_align_loss: 0.91   time: 93.91s
+**************************[2024-09-21 23:55:22] validate Epoch: [235/300]***************************
+Now mAP: 0.9606 recall: 0.9444 precision: 0.9556 | Best mAP: 0.9638 recall: 0.9487 precision: 0.9581
+[2024-09-21 23:56:57] Epoch: [236/300] total_loss: 7.55  con_loss_student: 2.70  triple_loss_student: 2.63  global_align_loss: 1.31  low_align_loss: 0.91   time: 95.15s
+**************************[2024-09-21 23:58:32] validate Epoch: [236/300]***************************
+Now mAP: 0.9616 recall: 0.9459 precision: 0.9559 | Best mAP: 0.9638 recall: 0.9487 precision: 0.9581
+[2024-09-22 00:00:07] Epoch: [237/300] total_loss: 7.56  con_loss_student: 2.71  triple_loss_student: 2.64  global_align_loss: 1.31  low_align_loss: 0.91   time: 94.54s
+**************************[2024-09-22 00:01:41] validate Epoch: [237/300]***************************
+Now mAP: 0.9617 recall: 0.946 precision: 0.9555 | Best mAP: 0.9638 recall: 0.9487 precision: 0.9581
+[2024-09-22 00:03:17] Epoch: [238/300] total_loss: 7.49  con_loss_student: 2.69  triple_loss_student: 2.59  global_align_loss: 1.31  low_align_loss: 0.91   time: 95.45s
+**************************[2024-09-22 00:04:50] validate Epoch: [238/300]***************************
+Now mAP: 0.9617 recall: 0.9459 precision: 0.9561 | Best mAP: 0.9638 recall: 0.9487 precision: 0.9581
+[2024-09-22 00:06:25] Epoch: [239/300] total_loss: 7.75  con_loss_student: 2.75  triple_loss_student: 2.74  global_align_loss: 1.36  low_align_loss: 0.90   time: 95.63s
+**************************[2024-09-22 00:08:04] validate Epoch: [239/300]***************************
+Now mAP: 0.96  recall: 0.944 precision: 0.9546 | Best mAP: 0.9638 recall: 0.9487 precision: 0.9581
+[2024-09-22 00:09:42] Epoch: [240/300] total_loss: 7.59  con_loss_student: 2.72  triple_loss_student: 2.65  global_align_loss: 1.32  low_align_loss: 0.90   time: 97.60s
+**************************[2024-09-22 00:11:16] validate Epoch: [240/300]***************************
+Now mAP: 0.9636 recall: 0.9483 precision: 0.9583 | Best mAP: 0.9638 recall: 0.9487 precision: 0.9581
+[2024-09-22 00:12:54] Epoch: [241/300] total_loss: 7.79  con_loss_student: 2.74  triple_loss_student: 2.76  global_align_loss: 1.39  low_align_loss: 0.90   time: 97.56s
+**************************[2024-09-22 00:14:29] validate Epoch: [241/300]***************************
+Now mAP: 0.9621 recall: 0.9465 precision: 0.9565 | Best mAP: 0.9638 recall: 0.9487 precision: 0.9581
+[2024-09-22 00:16:06] Epoch: [242/300] total_loss: 7.80  con_loss_student: 2.76  triple_loss_student: 2.77  global_align_loss: 1.38  low_align_loss: 0.90   time: 97.59s
+**************************[2024-09-22 00:17:38] validate Epoch: [242/300]***************************
+Now mAP: 0.9622 recall: 0.9467 precision: 0.9566 | Best mAP: 0.9638 recall: 0.9487 precision: 0.9581
+[2024-09-22 00:19:13] Epoch: [243/300] total_loss: 7.77  con_loss_student: 2.74  triple_loss_student: 2.74  global_align_loss: 1.39  low_align_loss: 0.90   time: 95.60s
+**************************[2024-09-22 00:20:48] validate Epoch: [243/300]***************************
+Now mAP: 0.9615 recall: 0.9451 precision: 0.9557 | Best mAP: 0.9638 recall: 0.9487 precision: 0.9581
+[2024-09-22 00:22:24] Epoch: [244/300] total_loss: 7.76  con_loss_student: 2.76  triple_loss_student: 2.75  global_align_loss: 1.35  low_align_loss: 0.90   time: 95.11s
+**************************[2024-09-22 00:23:59] validate Epoch: [244/300]***************************
+Now mAP: 0.9615 recall: 0.9455 precision: 0.9557 | Best mAP: 0.9638 recall: 0.9487 precision: 0.9581
+[2024-09-22 00:25:34] Epoch: [245/300] total_loss: 7.96  con_loss_student: 2.82  triple_loss_student: 2.85  global_align_loss: 1.41  low_align_loss: 0.89   time: 95.73s
+**************************[2024-09-22 00:27:09] validate Epoch: [245/300]***************************
+Now mAP: 0.9617 recall: 0.9454 precision: 0.9559 | Best mAP: 0.9638 recall: 0.9487 precision: 0.9581
+[2024-09-22 00:28:34] Epoch: [246/300] total_loss: 7.88  con_loss_student: 2.77  triple_loss_student: 2.79  global_align_loss: 1.42  low_align_loss: 0.89   time: 84.33s
+**************************[2024-09-22 00:29:59] validate Epoch: [246/300]***************************
+Now mAP: 0.9609 recall: 0.9449 precision: 0.9557 | Best mAP: 0.9638 recall: 0.9487 precision: 0.9581
+[2024-09-22 00:31:22] Epoch: [247/300] total_loss: 7.73  con_loss_student: 2.73  triple_loss_student: 2.74  global_align_loss: 1.37  low_align_loss: 0.89   time: 83.87s
+**************************[2024-09-22 00:32:46] validate Epoch: [247/300]***************************
+Now mAP: 0.9625 recall: 0.9468 precision: 0.9565 | Best mAP: 0.9638 recall: 0.9487 precision: 0.9581
+[2024-09-22 00:34:10] Epoch: [248/300] total_loss: 7.59  con_loss_student: 2.72  triple_loss_student: 2.65  global_align_loss: 1.33  low_align_loss: 0.89   time: 83.70s
+**************************[2024-09-22 00:35:33] validate Epoch: [248/300]***************************
+Now mAP: 0.9621 recall: 0.9462 precision: 0.9569 | Best mAP: 0.9638 recall: 0.9487 precision: 0.9581
+[2024-09-22 00:36:57] Epoch: [249/300] total_loss: 7.86  con_loss_student: 2.78  triple_loss_student: 2.81  global_align_loss: 1.38  low_align_loss: 0.89   time: 83.73s
+**************************[2024-09-22 00:38:29] validate Epoch: [249/300]***************************
+Now mAP: 0.9623 recall: 0.9466 precision: 0.9564 | Best mAP: 0.9638 recall: 0.9487 precision: 0.9581
+[2024-09-22 00:39:52] Epoch: [250/300] total_loss: 7.85  con_loss_student: 2.78  triple_loss_student: 2.79  global_align_loss: 1.40  low_align_loss: 0.88   time: 83.86s
+**************************[2024-09-22 00:41:23] validate Epoch: [250/300]***************************
+Now mAP: 0.9631 recall: 0.9475 precision: 0.9577 | Best mAP: 0.9638 recall: 0.9487 precision: 0.9581
+[2024-09-22 00:42:46] Epoch: [251/300] total_loss: 7.83  con_loss_student: 2.77  triple_loss_student: 2.79  global_align_loss: 1.39  low_align_loss: 0.88   time: 83.48s
+**************************[2024-09-22 00:44:15] validate Epoch: [251/300]***************************
+Now mAP: 0.9626 recall: 0.947 precision: 0.9572 | Best mAP: 0.9638 recall: 0.9487 precision: 0.9581
+[2024-09-22 00:45:39] Epoch: [252/300] total_loss: 7.69  con_loss_student: 2.71  triple_loss_student: 2.70  global_align_loss: 1.40  low_align_loss: 0.88   time: 83.22s
+**************************[2024-09-22 00:47:09] validate Epoch: [252/300]***************************
+Now mAP: 0.9616 recall: 0.9462 precision: 0.9562 | Best mAP: 0.9638 recall: 0.9487 precision: 0.9581
+[2024-09-22 00:48:34] Epoch: [253/300] total_loss: 7.74  con_loss_student: 2.74  triple_loss_student: 2.73  global_align_loss: 1.39  low_align_loss: 0.88   time: 84.42s
+**************************[2024-09-22 00:50:00] validate Epoch: [253/300]***************************
+Now mAP: 0.9634 recall: 0.9477 precision: 0.9576 | Best mAP: 0.9638 recall: 0.9487 precision: 0.9581
+[2024-09-22 00:51:24] Epoch: [254/300] total_loss: 7.95  con_loss_student: 2.80  triple_loss_student: 2.84  global_align_loss: 1.44  low_align_loss: 0.88   time: 84.17s
+**************************[2024-09-22 00:52:50] validate Epoch: [254/300]***************************
+Now mAP: 0.9646 recall: 0.9494 precision: 0.959 | Best mAP: 0.9646 recall: 0.9494 precision: 0.959
+[2024-09-22 00:54:13] Epoch: [255/300] total_loss: 7.70  con_loss_student: 2.72  triple_loss_student: 2.71  global_align_loss: 1.39  low_align_loss: 0.88   time: 83.42s
+**************************[2024-09-22 00:55:39] validate Epoch: [255/300]***************************
+Now mAP: 0.96  recall: 0.9439 precision: 0.9545 | Best mAP: 0.9646 recall: 0.9494 precision: 0.959
+[2024-09-22 00:57:03] Epoch: [256/300] total_loss: 7.82  con_loss_student: 2.74  triple_loss_student: 2.78  global_align_loss: 1.42  low_align_loss: 0.87   time: 83.80s
+**************************[2024-09-22 00:58:26] validate Epoch: [256/300]***************************
+Now mAP: 0.9618 recall: 0.9463 precision: 0.9569 | Best mAP: 0.9646 recall: 0.9494 precision: 0.959
+[2024-09-22 00:59:50] Epoch: [257/300] total_loss: 7.88  con_loss_student: 2.77  triple_loss_student: 2.81  global_align_loss: 1.43  low_align_loss: 0.87   time: 83.81s
+**************************[2024-09-22 01:01:14] validate Epoch: [257/300]***************************
+Now mAP: 0.9629 recall: 0.9474 precision: 0.9578 | Best mAP: 0.9646 recall: 0.9494 precision: 0.959
+[2024-09-22 01:02:38] Epoch: [258/300] total_loss: 7.90  con_loss_student: 2.76  triple_loss_student: 2.82  global_align_loss: 1.44  low_align_loss: 0.87   time: 83.38s
+**************************[2024-09-22 01:04:04] validate Epoch: [258/300]***************************
+Now mAP: 0.9621 recall: 0.946 precision: 0.9565 | Best mAP: 0.9646 recall: 0.9494 precision: 0.959
+[2024-09-22 01:05:27] Epoch: [259/300] total_loss: 7.99  con_loss_student: 2.80  triple_loss_student: 2.87  global_align_loss: 1.45  low_align_loss: 0.87   time: 83.93s
+**************************[2024-09-22 01:06:55] validate Epoch: [259/300]***************************
+Now mAP: 0.9615 recall: 0.9453 precision: 0.956 | Best mAP: 0.9646 recall: 0.9494 precision: 0.959
+[2024-09-22 01:08:19] Epoch: [260/300] total_loss: 7.87  con_loss_student: 2.77  triple_loss_student: 2.81  global_align_loss: 1.42  low_align_loss: 0.87   time: 84.16s
+**************************[2024-09-22 01:09:48] validate Epoch: [260/300]***************************
+Now mAP: 0.9627 recall: 0.9469 precision: 0.9565 | Best mAP: 0.9646 recall: 0.9494 precision: 0.959
+[2024-09-22 01:11:14] Epoch: [261/300] total_loss: 8.00  con_loss_student: 2.80  triple_loss_student: 2.88  global_align_loss: 1.45  low_align_loss: 0.87   time: 85.53s
+**************************[2024-09-22 01:12:42] validate Epoch: [261/300]***************************
+Now mAP: 0.9634 recall: 0.9479 precision: 0.958 | Best mAP: 0.9646 recall: 0.9494 precision: 0.959
+[2024-09-22 01:14:06] Epoch: [262/300] total_loss: 7.87  con_loss_student: 2.76  triple_loss_student: 2.80  global_align_loss: 1.45  low_align_loss: 0.87   time: 84.26s
+**************************[2024-09-22 01:15:35] validate Epoch: [262/300]***************************
+Now mAP: 0.9625 recall: 0.9463 precision: 0.9571 | Best mAP: 0.9646 recall: 0.9494 precision: 0.959
+[2024-09-22 01:16:58] Epoch: [263/300] total_loss: 8.00  con_loss_student: 2.79  triple_loss_student: 2.88  global_align_loss: 1.46  low_align_loss: 0.86   time: 83.93s
+**************************[2024-09-22 01:18:27] validate Epoch: [263/300]***************************
+Now mAP: 0.9619 recall: 0.9456 precision: 0.956 | Best mAP: 0.9646 recall: 0.9494 precision: 0.959
+[2024-09-22 01:19:51] Epoch: [264/300] total_loss: 7.78  con_loss_student: 2.73  triple_loss_student: 2.75  global_align_loss: 1.44  low_align_loss: 0.86   time: 84.02s
+**************************[2024-09-22 01:21:17] validate Epoch: [264/300]***************************
+Now mAP: 0.9602 recall: 0.9439 precision: 0.9548 | Best mAP: 0.9646 recall: 0.9494 precision: 0.959
+[2024-09-22 01:22:41] Epoch: [265/300] total_loss: 7.95  con_loss_student: 2.77  triple_loss_student: 2.84  global_align_loss: 1.49  low_align_loss: 0.86   time: 83.60s
+**************************[2024-09-22 01:24:09] validate Epoch: [265/300]***************************
+Now mAP: 0.961 recall: 0.9448 precision: 0.9554 | Best mAP: 0.9646 recall: 0.9494 precision: 0.959
+[2024-09-22 01:25:33] Epoch: [266/300] total_loss: 7.91  con_loss_student: 2.74  triple_loss_student: 2.82  global_align_loss: 1.49  low_align_loss: 0.86   time: 83.62s
+**************************[2024-09-22 01:26:58] validate Epoch: [266/300]***************************
+Now mAP: 0.9619 recall: 0.9459 precision: 0.9558 | Best mAP: 0.9646 recall: 0.9494 precision: 0.959
+[2024-09-22 01:28:21] Epoch: [267/300] total_loss: 7.99  con_loss_student: 2.77  triple_loss_student: 2.86  global_align_loss: 1.50  low_align_loss: 0.86   time: 83.46s
+**************************[2024-09-22 01:29:49] validate Epoch: [267/300]***************************
+Now mAP: 0.9632 recall: 0.9481 precision: 0.9576 | Best mAP: 0.9646 recall: 0.9494 precision: 0.959
+[2024-09-22 01:31:13] Epoch: [268/300] total_loss: 7.90  con_loss_student: 2.75  triple_loss_student: 2.82  global_align_loss: 1.47  low_align_loss: 0.86   time: 83.52s
+**************************[2024-09-22 01:32:40] validate Epoch: [268/300]***************************
+Now mAP: 0.961 recall: 0.9446 precision: 0.9557 | Best mAP: 0.9646 recall: 0.9494 precision: 0.959
+[2024-09-22 01:34:04] Epoch: [269/300] total_loss: 8.11  con_loss_student: 2.81  triple_loss_student: 2.95  global_align_loss: 1.49  low_align_loss: 0.86   time: 83.18s
+**************************[2024-09-22 01:35:26] validate Epoch: [269/300]***************************
+Now mAP: 0.9617 recall: 0.9459 precision: 0.9568 | Best mAP: 0.9646 recall: 0.9494 precision: 0.959
+[2024-09-22 01:36:49] Epoch: [270/300] total_loss: 8.19  con_loss_student: 2.83  triple_loss_student: 2.97  global_align_loss: 1.53  low_align_loss: 0.85   time: 83.53s
+**************************[2024-09-22 01:38:17] validate Epoch: [270/300]***************************
+Now mAP: 0.962 recall: 0.946 precision: 0.9564 | Best mAP: 0.9646 recall: 0.9494 precision: 0.959
+[2024-09-22 01:39:44] Epoch: [271/300] total_loss: 7.81  con_loss_student: 2.72  triple_loss_student: 2.75  global_align_loss: 1.49  low_align_loss: 0.85   time: 86.25s
+**************************[2024-09-22 01:41:17] validate Epoch: [271/300]***************************
+Now mAP: 0.963 recall: 0.9482 precision: 0.9577 | Best mAP: 0.9646 recall: 0.9494 precision: 0.959
+[2024-09-22 01:42:43] Epoch: [272/300] total_loss: 8.14  con_loss_student: 2.80  triple_loss_student: 2.94  global_align_loss: 1.55  low_align_loss: 0.85   time: 86.19s
+**************************[2024-09-22 01:44:20] validate Epoch: [272/300]***************************
+Now mAP: 0.9594 recall: 0.9424 precision: 0.9547 | Best mAP: 0.9646 recall: 0.9494 precision: 0.959
+[2024-09-22 01:45:45] Epoch: [273/300] total_loss: 7.97  con_loss_student: 2.79  triple_loss_student: 2.85  global_align_loss: 1.49  low_align_loss: 0.85   time: 85.35s
+**************************[2024-09-22 01:47:18] validate Epoch: [273/300]***************************
+Now mAP: 0.9636 recall: 0.9478 precision: 0.9578 | Best mAP: 0.9646 recall: 0.9494 precision: 0.959
+[2024-09-22 01:48:42] Epoch: [274/300] total_loss: 8.00  con_loss_student: 2.78  triple_loss_student: 2.86  global_align_loss: 1.51  low_align_loss: 0.85   time: 84.14s
+**************************[2024-09-22 01:50:13] validate Epoch: [274/300]***************************
+Now mAP: 0.9599 recall: 0.9437 precision: 0.9549 | Best mAP: 0.9646 recall: 0.9494 precision: 0.959
+[2024-09-22 01:51:37] Epoch: [275/300] total_loss: 8.07  con_loss_student: 2.79  triple_loss_student: 2.90  global_align_loss: 1.53  low_align_loss: 0.85   time: 84.45s
+**************************[2024-09-22 01:53:10] validate Epoch: [275/300]***************************
+Now mAP: 0.9629 recall: 0.9469 precision: 0.957 | Best mAP: 0.9646 recall: 0.9494 precision: 0.959
+[2024-09-22 01:54:36] Epoch: [276/300] total_loss: 8.18  con_loss_student: 2.83  triple_loss_student: 2.97  global_align_loss: 1.53  low_align_loss: 0.85   time: 85.61s
+**************************[2024-09-22 01:56:09] validate Epoch: [276/300]***************************
+Now mAP: 0.9648 recall: 0.95  precision: 0.9587 | Best mAP: 0.9648 recall: 0.95  precision: 0.9587
+[2024-09-22 01:57:34] Epoch: [277/300] total_loss: 8.01  con_loss_student: 2.76  triple_loss_student: 2.87  global_align_loss: 1.54  low_align_loss: 0.84   time: 84.92s
+**************************[2024-09-22 01:59:06] validate Epoch: [277/300]***************************
+Now mAP: 0.9642 recall: 0.9489 precision: 0.9588 | Best mAP: 0.9648 recall: 0.95  precision: 0.9587
+[2024-09-22 02:00:31] Epoch: [278/300] total_loss: 8.12  con_loss_student: 2.79  triple_loss_student: 2.92  global_align_loss: 1.57  low_align_loss: 0.84   time: 85.65s
+**************************[2024-09-22 02:01:59] validate Epoch: [278/300]***************************
+Now mAP: 0.9628 recall: 0.9474 precision: 0.9576 | Best mAP: 0.9648 recall: 0.95  precision: 0.9587
+[2024-09-22 02:03:24] Epoch: [279/300] total_loss: 8.29  con_loss_student: 2.84  triple_loss_student: 3.01  global_align_loss: 1.60  low_align_loss: 0.84   time: 84.27s
+**************************[2024-09-22 02:04:53] validate Epoch: [279/300]***************************
+Now mAP: 0.9619 recall: 0.9463 precision: 0.9568 | Best mAP: 0.9648 recall: 0.95  precision: 0.9587
+[2024-09-22 02:06:19] Epoch: [280/300] total_loss: 8.19  con_loss_student: 2.83  triple_loss_student: 2.96  global_align_loss: 1.57  low_align_loss: 0.84   time: 85.61s
+**************************[2024-09-22 02:07:49] validate Epoch: [280/300]***************************
+Now mAP: 0.9608 recall: 0.9452 precision: 0.9556 | Best mAP: 0.9648 recall: 0.95  precision: 0.9587
+[2024-09-22 02:09:13] Epoch: [281/300] total_loss: 8.37  con_loss_student: 2.83  triple_loss_student: 3.05  global_align_loss: 1.65  low_align_loss: 0.84   time: 84.24s
+**************************[2024-09-22 02:10:45] validate Epoch: [281/300]***************************
+Now mAP: 0.9625 recall: 0.947 precision: 0.9571 | Best mAP: 0.9648 recall: 0.95  precision: 0.9587
+[2024-09-22 02:12:09] Epoch: [282/300] total_loss: 8.14  con_loss_student: 2.78  triple_loss_student: 2.94  global_align_loss: 1.58  low_align_loss: 0.84   time: 83.63s
+**************************[2024-09-22 02:13:40] validate Epoch: [282/300]***************************
+Now mAP: 0.9637 recall: 0.9486 precision: 0.958 | Best mAP: 0.9648 recall: 0.95  precision: 0.9587
+[2024-09-22 02:15:05] Epoch: [283/300] total_loss: 8.21  con_loss_student: 2.80  triple_loss_student: 2.98  global_align_loss: 1.60  low_align_loss: 0.84   time: 85.31s
+**************************[2024-09-22 02:16:29] validate Epoch: [283/300]***************************
+Now mAP: 0.9615 recall: 0.9456 precision: 0.9562 | Best mAP: 0.9648 recall: 0.95  precision: 0.9587
+[2024-09-22 02:17:54] Epoch: [284/300] total_loss: 8.11  con_loss_student: 2.77  triple_loss_student: 2.92  global_align_loss: 1.58  low_align_loss: 0.83   time: 84.80s
+**************************[2024-09-22 02:19:23] validate Epoch: [284/300]***************************
+Now mAP: 0.9609 recall: 0.945 precision: 0.9561 | Best mAP: 0.9648 recall: 0.95  precision: 0.9587
+[2024-09-22 02:20:47] Epoch: [285/300] total_loss: 8.07  con_loss_student: 2.77  triple_loss_student: 2.90  global_align_loss: 1.58  low_align_loss: 0.83   time: 83.87s
+**************************[2024-09-22 02:22:13] validate Epoch: [285/300]***************************
+Now mAP: 0.9607 recall: 0.9449 precision: 0.9555 | Best mAP: 0.9648 recall: 0.95  precision: 0.9587
+[2024-09-22 02:23:37] Epoch: [286/300] total_loss: 8.10  con_loss_student: 2.76  triple_loss_student: 2.90  global_align_loss: 1.62  low_align_loss: 0.83   time: 83.79s
+**************************[2024-09-22 02:25:05] validate Epoch: [286/300]***************************
+Now mAP: 0.9611 recall: 0.9449 precision: 0.956 | Best mAP: 0.9648 recall: 0.95  precision: 0.9587
+[2024-09-22 02:26:29] Epoch: [287/300] total_loss: 8.30  con_loss_student: 2.82  triple_loss_student: 3.03  global_align_loss: 1.62  low_align_loss: 0.83   time: 84.61s
+**************************[2024-09-22 02:27:55] validate Epoch: [287/300]***************************
+Now mAP: 0.9607 recall: 0.9443 precision: 0.9556 | Best mAP: 0.9648 recall: 0.95  precision: 0.9587
+[2024-09-22 02:29:20] Epoch: [288/300] total_loss: 8.57  con_loss_student: 2.90  triple_loss_student: 3.17  global_align_loss: 1.68  low_align_loss: 0.83   time: 84.73s
+**************************[2024-09-22 02:30:49] validate Epoch: [288/300]***************************
+Now mAP: 0.9619 recall: 0.946 precision: 0.9565 | Best mAP: 0.9648 recall: 0.95  precision: 0.9587
+[2024-09-22 02:32:14] Epoch: [289/300] total_loss: 8.11  con_loss_student: 2.77  triple_loss_student: 2.91  global_align_loss: 1.61  low_align_loss: 0.83   time: 85.30s
+**************************[2024-09-22 02:33:40] validate Epoch: [289/300]***************************
+Now mAP: 0.9619 recall: 0.9463 precision: 0.9564 | Best mAP: 0.9648 recall: 0.95  precision: 0.9587
+[2024-09-22 02:35:04] Epoch: [290/300] total_loss: 8.40  con_loss_student: 2.82  triple_loss_student: 3.05  global_align_loss: 1.71  low_align_loss: 0.83   time: 84.22s
+**************************[2024-09-22 02:36:33] validate Epoch: [290/300]***************************
+Now mAP: 0.9611 recall: 0.9449 precision: 0.9559 | Best mAP: 0.9648 recall: 0.95  precision: 0.9587
+[2024-09-22 02:37:57] Epoch: [291/300] total_loss: 8.36  con_loss_student: 2.82  triple_loss_student: 3.04  global_align_loss: 1.68  low_align_loss: 0.83   time: 84.43s
+**************************[2024-09-22 02:39:27] validate Epoch: [291/300]***************************
+Now mAP: 0.9617 recall: 0.9457 precision: 0.9573 | Best mAP: 0.9648 recall: 0.95  precision: 0.9587
+[2024-09-22 02:40:51] Epoch: [292/300] total_loss: 8.54  con_loss_student: 2.87  triple_loss_student: 3.14  global_align_loss: 1.70  low_align_loss: 0.82   time: 84.29s
+**************************[2024-09-22 02:42:19] validate Epoch: [292/300]***************************
+Now mAP: 0.9618 recall: 0.9456 precision: 0.9563 | Best mAP: 0.9648 recall: 0.95  precision: 0.9587
+[2024-09-22 02:43:44] Epoch: [293/300] total_loss: 8.30  con_loss_student: 2.80  triple_loss_student: 3.01  global_align_loss: 1.67  low_align_loss: 0.82   time: 84.38s
+**************************[2024-09-22 02:45:10] validate Epoch: [293/300]***************************
+Now mAP: 0.9625 recall: 0.947 precision: 0.9572 | Best mAP: 0.9648 recall: 0.95  precision: 0.9587
+[2024-09-22 02:46:34] Epoch: [294/300] total_loss: 8.48  con_loss_student: 2.85  triple_loss_student: 3.08  global_align_loss: 1.73  low_align_loss: 0.82   time: 83.84s
+**************************[2024-09-22 02:48:03] validate Epoch: [294/300]***************************
+Now mAP: 0.9619 recall: 0.946 precision: 0.9562 | Best mAP: 0.9648 recall: 0.95  precision: 0.9587
+[2024-09-22 02:49:28] Epoch: [295/300] total_loss: 8.22  con_loss_student: 2.77  triple_loss_student: 2.94  global_align_loss: 1.68  low_align_loss: 0.82   time: 85.11s
+**************************[2024-09-22 02:50:57] validate Epoch: [295/300]***************************
+Now mAP: 0.9615 recall: 0.9454 precision: 0.9567 | Best mAP: 0.9648 recall: 0.95  precision: 0.9587
+[2024-09-22 02:52:21] Epoch: [296/300] total_loss: 8.57  con_loss_student: 2.84  triple_loss_student: 3.14  global_align_loss: 1.77  low_align_loss: 0.82   time: 83.86s
+**************************[2024-09-22 02:53:47] validate Epoch: [296/300]***************************
+Now mAP: 0.9605 recall: 0.9444 precision: 0.9544 | Best mAP: 0.9648 recall: 0.95  precision: 0.9587
+[2024-09-22 02:55:11] Epoch: [297/300] total_loss: 8.55  con_loss_student: 2.86  triple_loss_student: 3.13  global_align_loss: 1.74  low_align_loss: 0.82   time: 83.64s
+**************************[2024-09-22 02:56:37] validate Epoch: [297/300]***************************
+Now mAP: 0.9622 recall: 0.9466 precision: 0.9565 | Best mAP: 0.9648 recall: 0.95  precision: 0.9587
+[2024-09-22 02:58:06] Epoch: [298/300] total_loss: 8.63  con_loss_student: 2.86  triple_loss_student: 3.18  global_align_loss: 1.78  low_align_loss: 0.82   time: 89.21s
+**************************[2024-09-22 02:59:38] validate Epoch: [298/300]***************************
+Now mAP: 0.9612 recall: 0.9451 precision: 0.9555 | Best mAP: 0.9648 recall: 0.95  precision: 0.9587
+[2024-09-22 03:01:33] Epoch: [299/300] total_loss: 8.40  con_loss_student: 2.81  triple_loss_student: 3.03  global_align_loss: 1.74  low_align_loss: 0.82   time: 115.45s
+**************************[2024-09-22 03:03:05] validate Epoch: [299/300]***************************
+Now mAP: 0.9621 recall: 0.9467 precision: 0.9566 | Best mAP: 0.9648 recall: 0.95  precision: 0.9587

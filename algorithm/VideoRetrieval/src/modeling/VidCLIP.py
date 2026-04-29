@@ -1,0 +1,220 @@
+import torch
+import torch.nn as nn
+from functools import partial
+from transformers.models.clip.configuration_clip import CLIPConfig, CLIPTextConfig, CLIPVisionConfig
+from src.modeling.CLIP_ViP import CLIPModel, clip_loss
+from src.modeling.CLIP import CLIPModel as CLIP
+from src.module.text_proxy import TextProxy
+
+
+class VidCLIP(nn.Module):
+    def __init__(self, args):
+        super(VidCLIP, self).__init__()
+        clipconfig = CLIPConfig.from_pretrained(args.clip_config)  # openai/clip-vit-base-patch32
+        setattr(clipconfig, "vision_additional_config", args.clip_vision_additional_config)
+        self.vision_additional_config = args.clip_vision_additional_config  # ViP
+        if args.clip_weights:  # openai/clip-vit-base-patch32
+            if self.vision_additional_config.type == "ViP":
+                self.clipmodel = CLIPModel.from_pretrained(args.clip_weights, config=clipconfig)
+            else:
+                self.clipmodel = CLIP.from_pretrained(args.clip_weights, config=clipconfig)
+        else:
+            if self.vision_additional_config.type == "ViP":
+                self.clipmodel = CLIPModel(clipconfig)
+            else:
+                self.clipmodel = CLIP(clipconfig)
+
+        # init logit scale from 
+        logit_scale_value = self.vision_additional_config.logit_scale_init_value  # 4.60
+        self.clipmodel.logit_scale.data.fill_(logit_scale_value)
+
+        # text proxy
+        self.text_proxy = TextProxy(args)
+
+    def text_masked_language_modeling(self, text, mask_ratio=0.1, k_sample=2):
+        if not self.training:
+            return text
+
+        mask_token_id = 49407
+        b, context_length = text["input_ids"].shape
+        input_ids = text["input_ids"]
+        attention_mask = text["attention_mask"]
+        vocab_size = mask_token_id + 1
+
+        # 扩展为k_sample维度 [b, k_sample, seq_len]
+        input_ids_expanded = input_ids.unsqueeze(1).expand(-1, k_sample, -1).clone()
+        attention_mask_expanded = attention_mask.unsqueeze(1).expand(-1, k_sample, -1)
+
+        # 创建随机矩阵用于决定掩码类型 [b, k_sample, seq_len]
+        rand_mask = torch.rand(b, k_sample, context_length, device=input_ids.device)
+        rand_replace = torch.rand(b, k_sample, context_length, device=input_ids.device)
+
+        # 计算每个位置是否被掩码 (只对有效token)
+        mask_prob = mask_ratio * attention_mask_expanded.float()
+        is_masked = (torch.rand(b, k_sample, context_length, device=input_ids.device) < mask_prob)
+
+        # BERT风格掩码 (80-10-10规则)
+        # 1. 10% 替换为 [MASK]
+        mask_pos = is_masked & (rand_mask < 0.1)
+        input_ids_expanded[mask_pos] = mask_token_id
+
+        # 2. 80% 替换为随机token
+        random_pos = is_masked & (rand_mask >= 0.2) & (rand_mask < 0.9)
+        random_tokens = torch.randint(
+            0, vocab_size, (b, k_sample, context_length),
+            device=input_ids.device, dtype=input_ids.dtype
+        )
+        input_ids_expanded[random_pos] = random_tokens[random_pos]
+
+        # 3. 10% 保持不变 (无需操作)
+        # 添加原始未掩码样本 [b, 1, seq_len]
+        input_ids_original = input_ids.unsqueeze(1)
+        attention_mask_original = attention_mask.unsqueeze(1)
+
+        # 合并原始样本和掩码样本 [b, k_sample+1, seq_len]
+        input_ids_combined = torch.cat([input_ids_original, input_ids_expanded], dim=1)
+        attention_mask_combined = torch.cat([attention_mask_original, attention_mask_expanded], dim=1)
+
+        # 重塑为二维张量
+        combined_shape = input_ids_combined.shape
+        input_ids_combined = input_ids_combined.reshape(-1, combined_shape[-1])
+        attention_mask_combined = attention_mask_combined.reshape(-1, combined_shape[-1])
+
+        # 更新返回字典
+        text["input_ids"] = input_ids_combined
+        text["attention_mask"] = attention_mask_combined
+
+        return text
+
+    def overload_logit_scale(self, overload_logit_scale):
+        self.clipmodel.logit_scale.data.fill_(overload_logit_scale)
+
+    def forward(self, is_train, step, video, text_input_ids, text_input_mask, \
+                image=None, caption_ids=None, caption_masks=None):
+        """
+        video [B, n_clips*num_frms, C, H, W]
+        text_input_ids [B, L]
+        text_input_mask [B, L]
+        image [B, img_num, C, H, W]
+        caption_ids [B, img_num, L]
+        caption_masks [B, img_num, L]
+        """
+        B, N, C, H, W = video.shape
+
+        if self.vision_additional_config.type == "ViP":
+            inputs = {"input_ids": text_input_ids,
+                      "attention_mask": text_input_mask,
+                      "pixel_values": video,
+                      "return_loss": False,
+                      }
+            # inputs = self.text_masked_language_modeling(inputs, k_sample=2, mask_ratio=0.2)
+            outputs = self.clipmodel(**inputs)
+            results = {}
+
+            results["text_features"] = outputs["text_embeds"]
+            results["vis_features"] = outputs["image_embeds"]  # (b,dim)
+
+            M = self.vision_additional_config.add_cls_num + 1
+            results['vis_patch_features'] = outputs['vision_model_output'][0][:, :M, :]
+
+            # for text proxy learning
+            vis_patch_feat = results['vis_patch_features']  # (b,M,dim)
+            vis_feat = results["vis_features"]  # (b,dim)
+            text_feat = results["text_features"]  # (a,dim)
+
+            # if is_train:
+            #     text_proxy, text_scale = self.text_proxy(text_feat, vis_patch_feat, vis_patch_feat, is_train=is_train,
+            #                                              step=step)  # (a,b,dim)
+            #     results['text_proxy'] = text_proxy
+            #     results['text_scale'] = text_scale
+
+
+
+
+        else:
+            video = video.reshape(-1, C, H, W)
+            inputs = {"input_ids": text_input_ids,
+                      "attention_mask": text_input_mask,
+                      "pixel_values": video}
+            outputs = self.clipmodel(**inputs)
+            vis_features = outputs["vision_model_output"][1]
+
+            vis_features = self.clipmodel.visual_projection(vis_features)
+            vis_features = vis_features / vis_features.norm(dim=-1, keepdim=True)
+            vis_features = vis_features.reshape(B, N, -1).mean(1)
+            vis_features = vis_features / vis_features.norm(dim=-1, keepdim=True)
+
+            results = {}
+            results["text_features"] = outputs["text_embeds"]
+            results["vis_features"] = vis_features
+        if image is not None:
+            B, img_num, C, H, W = image.shape
+            L = caption_ids.shape[-1]
+            inputs = {"input_ids": caption_ids.reshape(-1, L),
+                      "attention_mask": caption_masks.reshape(-1, L),
+                      "pixel_values": image.reshape(-1, 1, C, H, W),
+                      "return_loss": False}
+            outputs = self.clipmodel(**inputs)
+            results["img_features"] = outputs["image_embeds"]
+            results["cap_features"] = outputs["text_embeds"]
+
+        return results
+
+    def forward_video(self, video):
+        inputs = {"pixel_values": video,
+                  "if_norm": True}
+        M = self.vision_additional_config.add_cls_num + 1
+        video_features = self.clipmodel.get_image_features(**inputs)
+        return video_features
+
+    def forward_text(self, text_input_ids, text_input_mask):
+        inputs = {"input_ids": text_input_ids,
+                  "attention_mask": text_input_mask,
+                  "if_norm": True}
+        text_features = self.clipmodel.get_text_features(**inputs)
+        return text_features
+
+    def freeze_text_encoder(self, freeze_text_proj):
+        freeze_list = [self.clipmodel.text_model]
+        if freeze_text_proj:
+            freeze_list.append(self.clipmodel.text_projection)
+        for m in freeze_list:
+            m.eval()
+            for param in m.parameters():
+                param.requires_grad = False
+
+    def sim_proxy(self, text_proxy, vid_embeds, text_embeds=None, is_train=True):
+        """
+
+        :param text_embeds: (a,b,dim)
+        :param vid_embeds: (b,dim)
+        :return:
+        """
+        text_proxy = text_proxy / text_proxy.norm(dim=-1, keepdim=True)
+        text_embeds = text_embeds / text_embeds.norm(dim=-1, keepdim=True) if text_embeds is not None else None
+        vid_embeds = vid_embeds / vid_embeds.norm(dim=-1, keepdim=True)
+
+        proxy_logits = torch.matmul(text_proxy.unsqueeze(2), vid_embeds.unsqueeze(2)).squeeze(1).squeeze(1)
+        # (a,b,1,dim)x(b,dim,1)->(a,b,1,1)->(a,b)
+        # proxy_logits = proxy_logits.max(2)[0]
+        # ->(a,b)
+
+        if is_train:
+            # hard negative
+            # pos_indices = torch.arange(text_proxy.size(0)) 
+            # pos_proxy = text_proxy[pos_indices, pos_indices]  # ->(a,512)
+            # pos_logits = torch.matmul(pos_proxy.unsqueeze(1), vid_embeds.transpose(0,1)).squeeze()
+            # # (a,1,dim)x(dim,b)->(a,1,b)->(a,b)
+
+            return proxy_logits, self.text_proxy.proxy_decoder.memory_bank.prototype
+
+        # print(text_embeds.shape, proxy_logits)
+        # b = text_embeds.shape[0]
+        # k = proxy_logits.shape[0] // b
+        # proxy_logits = proxy_logits.reshape(b, k, -1)
+        # proxy_logits = proxy_logits.transpose(1, 2)  # 形状变为 (b, b, k)
+        # top_n = int(torch.ceil(torch.tensor(k * 0.2)).item())
+        # top_values, _ = torch.topk(proxy_logits, top_n, dim=-1)
+        # proxy_logits = top_values.mean(dim=-1)
+
+        return proxy_logits, text_proxy

@@ -1,0 +1,8 @@
+iuxray:
+  name: "iuxray"
+  data_type: "imagetext_eval"
+  # data_path: "datasets/mimic_cxr/mimic_test.csv"
+  # data_path: "datasets/chexray/chexpert_test.csv"
+  data_path: "datasets/iuxray/iuxray_test.csv"
+  # data_path: "datasets/open-i/open_i_test.csv"
+#  data_path: "datasets/arch/arch_test.csv"

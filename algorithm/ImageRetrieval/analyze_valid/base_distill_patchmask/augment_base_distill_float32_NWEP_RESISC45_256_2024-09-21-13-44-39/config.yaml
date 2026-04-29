@@ -1,0 +1,83 @@
+dataset:
+  AID:
+    metric:
+      M: -1
+      P: 50
+      R: 500
+    name: AID
+    num_class: 30
+    path: /home/lkshpc/huangmengluan/data/AID/
+  NWEP_RESISC45:
+    metric:
+      M: -1
+      P: 50
+      R: 700
+    name: NWEP_RESISC45_Aug
+    num_class: 45
+    path: /home/lkshpc/huangmengluan/data/NWPU_RESISC45/
+  UCMD:
+    metric:
+      M: -1
+      P: 50
+      R: 100
+    name: UCMD
+    num_class: 21
+    path: /home/lkshpc/huangmengluan/data/UCMD/
+  aug_type: patch
+  augment: true
+  type: NWEP_RESISC45
+logs:
+  analysis_path: base_distill/
+  describe: ''
+  eval_step: 1
+  save_state_dict: true
+  start_eval_epoch: 150
+  store_path: logs/base_distill_aug_patch/
+loss:
+  T: 0.1
+  alpha: 2
+  base: 1
+  beta: 2
+  gamma: 0.3
+  margin: 0.5
+model:
+  dis_type: hamming
+  hash_bit: 256
+  name: base_distill
+  pretrained: true
+  student:
+    config_path: models_data/base_distill/student/
+    pre_train: true
+    save_name: TinyCLIP-ViT-8M-16-Text-3M-YFCC15M.pt
+  teacher:
+    config_path: models_data/base_distill/teacher/
+    pre_train: true
+    save_name: /home/lkshpc/caoqixuan/ImageRetrieval/logs/base_vit_valid/augment_base_vit_float32_NWEP_RESISC45_256_2024-09-06-21-12-12/base_vit_NWEP_RESISC45_256_-1.6250.pt
+optimizer:
+  adam:
+    betas: (0.9, 0.999)
+    eps: 1e-6
+    lr: 0.0001
+    norm_type: 2
+    weight_decay: 1e-4
+  cos:
+    T_0: 3
+    T_mult: 2
+    eta_min: 0.0001
+  lr_scheduler_type: none
+  max_grad_clip: 2
+  norm_type: 2
+  sgd:
+    lr: 0.0005
+    momentum: 0.9
+    weight_decay: 1e-4
+  step:
+    decay_epoch: 40
+    decay_param: 0.9
+    restart_epoch: -1
+  type: sgd
+train:
+  batch_size: 128
+  convert_weights: false
+  epoch: 300
+  num_works: 4

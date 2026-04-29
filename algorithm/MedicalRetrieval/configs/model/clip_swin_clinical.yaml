@@ -1,0 +1,66 @@
+name: "clip_custom"
+temperature: 0.07
+
+#image_encoder:
+#  source: "huggingface" # one of { "huggingface"}
+#  name: 'openai/clip-vit-base-patch32'
+#  pretrained: True
+#  model_type: 'vit'
+#  cache_dir: "huggingface/"
+
+image_encoder:
+  source: "huggingface" # one of { "huggingface"}
+  name: 'microsoft/swin-tiny-patch4-window7-224'
+  pretrained: True
+  model_type: 'swin'
+  cache_dir: "huggingface/"
+#
+
+text_encoder:
+  source: "huggingface" # one of { "huggingface"}
+  name: "emilyalsentzer/Bio_ClinicalBERT"
+  pretrained: True
+  gradient_checkpointing: false
+  pooling: "bos" # one of { "eos" | "bos" | "mean" }
+  cache_dir: "huggingface/"
+  trust_remote_code: true
+  mlm_head: true
+
+k_sample: 6
+mask_ratio: 0.1
+
+#text_encoder:
+#  source: "huggingface" # one of { "huggingface"}
+#  name: "openai/clip-vit-base-patch32"
+#  pretrained: True
+#  gradient_checkpointing: false
+#  pooling: "bos" # one of { "eos" | "bos" | "mean" }
+#  cache_dir: "huggingface/"
+#  trust_remote_code: true
+#  mlm_head: true
+
+projection_head: # optional
+  name: "linear" # one of { "linear" | "mlp" }
+  dropout: 0
+  proj_dim: 512
+
+#llama_projection_head: # optional
+#  name: "linear" # one of { "linear" | "mlp" }
+#  dropout: 0.1
+#  proj_dim: 3072
+#
+#embedding_projection_head: # optional
+#  name: "linear" # one of { "linear" | "mlp" }
+#  dropout: 0
+#  proj_dim: 512
+
+#base:
+#  seed: 1234
+#  amp: True
+#  image_size: 224
+#  text_max_length: 77
+#  loss_best: contrastive
+#  data_frac: 1.0
+#  output:
+#    checkpoint: ${hydra:run.dir}/checkpoints/
+#    tensorboard: ${hydra:run.dir}/tensorboard/
