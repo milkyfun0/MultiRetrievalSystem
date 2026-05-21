@@ -9,9 +9,9 @@ ROOT_DIR = Path(__file__).resolve().parent.parent
 
 # ========= checkpoint 常量配置 =========
 # 为空字符串表示不加载权重，只初始化模型结构
-I2I_CKPT_PATH = "analyze_valid/base_distill_patchmask/augment_base_distill_float32_NWEP_RESISC45_256_2024-09-21-13-44-39/base_distill_NWEP_RESISC45_256_0.9648.pt"
-T2I_CKPT_PATH = "Ksample4Ratio0.32025-01-29/21-09-16/checkpoints/model-best.tar"
-T2V_CKPT_PATH = "ckpts/model_step_10547.pt"
+I2I_CKPT_PATH = ""
+T2I_CKPT_PATH = ""
+T2V_CKPT_PATH = ""
 
 # ========= 端口配置 =========
 GATEWAY_HOST = "0.0.0.0"
