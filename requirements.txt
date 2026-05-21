@@ -1,0 +1,42 @@
+
+# PyTorch + CUDA 11.8
+torch==2.6.0
+torchvision==0.21.0
+torchaudio==2.6.0
+--index-url https://download.pytorch.org/whl/cu118
+
+# 服务 & Web 依赖
+uvicorn
+fastapi
+httpx
+
+# 配置 & 工具
+pyyaml
+transformers
+bytecode
+hydra-core
+omegaconf
+fastapi>=0.111
+uvicorn>=0.30
+pydantic>=2.7
+numpy>=1.26
+httpx>=0.27
+pytest>=8.0
+
+# 训练 & 数据处理
+tensorboard
+albumentations
+numpy==1.26.0
+pandas
+easydict
+nltk
+bert_score
+tensorboardX
+ujson
+decord
+pydantic-settings>=2.3
+
+# 清华 PyPI 镜像（加速安装）
+-i https://pypi.tuna.tsinghua.edu.cn/simple
+
+
