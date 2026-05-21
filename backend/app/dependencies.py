@@ -35,12 +35,6 @@ class AppContainer:
 
     def shutdown(self) -> None:
         self.job_runner.shutdown()
-        close_fn = getattr(self.algorithm_service, "close", None)
-        if callable(close_fn):
-            try:
-                close_fn()
-            except Exception:  # noqa: BLE001
-                pass
 
 
 def build_container(settings: Settings) -> AppContainer:
@@ -53,14 +47,7 @@ def build_container(settings: Settings) -> AppContainer:
     faiss_service = FaissLikeService(settings.faiss_dir)
     object_service = ObjectService(settings.public_base_url, settings.query_upload_dir, settings.managed_assets_dir)
     if settings.algorithm_mode == "http":
-        algorithm_service = HttpAlgorithmService(
-            settings.algorithm_gateway_url,
-            timeout=settings.algorithm_timeout,
-            max_connections=settings.algorithm_connection_pool_maxsize,
-            max_keepalive_connections=settings.algorithm_connection_pool_size,
-            max_retries=settings.algorithm_max_retries,
-            retry_backoff=settings.algorithm_retry_backoff,
-        )
+        algorithm_service = HttpAlgorithmService(settings.algorithm_gateway_url)
     else:
         algorithm_service = DeterministicAlgorithmService()
     job_runner = LocalJobRunner(max_workers=settings.local_job_workers)

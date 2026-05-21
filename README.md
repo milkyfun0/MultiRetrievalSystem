@@ -3,6 +3,7 @@
 ## 概述
 
 MultiRetrievalSystem 是一个完整的多模态检索系统，支持文本到视频（Text2Video）、文本到图像（Text2Image）和图像到图像（Image2Image）三种检索模式。系统采用模块化架构，包含前端界面、后端服务和算法服务三大组件，适用于多媒体内容检索、医学影像检索、视频检索等多种场景。
+pip install uvicorn fastapi httpx pyyaml transformers bytecode hydra-core omegaconf
 
 ### 核心功能
 - **文本到视频检索**：输入文本描述，检索相关视频片段

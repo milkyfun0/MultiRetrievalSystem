@@ -7,29 +7,24 @@ from pathlib import Path
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
 
-# ========= checkpoint 配置（支持环境变量覆盖） =========
+# ========= checkpoint 常量配置 =========
 # 为空字符串表示不加载权重，只初始化模型结构
-# 局域网部署时通过 export I2I_CKPT_PATH=/path/to/ckpt 注入
-I2I_CKPT_PATH = os.getenv("I2I_CKPT_PATH", "")
-T2I_CKPT_PATH = os.getenv("T2I_CKPT_PATH", "")
-T2V_CKPT_PATH = os.getenv("T2V_CKPT_PATH", "")
+I2I_CKPT_PATH = "analyze_valid/base_distill_patchmask/augment_base_distill_float32_NWEP_RESISC45_256_2024-09-21-13-44-39/base_distill_NWEP_RESISC45_256_0.9648.pt"
+T2I_CKPT_PATH = "Ksample4Ratio0.32025-01-29/21-09-16/checkpoints/model-best.tar"
+T2V_CKPT_PATH = "ckpts/model_step_10547.pt"
 
-# ========= 监听地址/端口配置（支持环境变量覆盖） =========
-# 默认 0.0.0.0 以支持局域网访问，可通过环境变量收紧为 127.0.0.1
-GATEWAY_HOST = os.getenv("MMR_GATEWAY_HOST", "0.0.0.0")
-GATEWAY_PORT = int(os.getenv("MMR_GATEWAY_PORT", "18080"))
+# ========= 端口配置 =========
+GATEWAY_HOST = "0.0.0.0"
+GATEWAY_PORT = 18080
 
-I2I_HOST = os.getenv("MMR_I2I_HOST", "0.0.0.0")
-I2I_PORT = int(os.getenv("MMR_I2I_PORT", "18081"))
+I2I_HOST = "0.0.0.0"
+I2I_PORT = 18081
 
-T2I_HOST = os.getenv("MMR_T2I_HOST", "0.0.0.0")
-T2I_PORT = int(os.getenv("MMR_T2I_PORT", "18082"))
+T2I_HOST = "0.0.0.0"
+T2I_PORT = 18082
 
-T2V_HOST = os.getenv("MMR_T2V_HOST", "0.0.0.0")
-T2V_PORT = int(os.getenv("MMR_T2V_PORT", "18083"))
-
-# 启动间隔（大模型加载较慢，可调整）
-LAUNCH_INTERVAL_SEC = float(os.getenv("MMR_LAUNCH_INTERVAL_SEC", "1.5"))
+T2V_HOST = "0.0.0.0"
+T2V_PORT = 18083
 
 
 def _fmt_ckpt(v: str) -> str:
@@ -85,11 +80,6 @@ def main():
     print(f"  I2I_CKPT_PATH={_fmt_ckpt(I2I_CKPT_PATH)}", flush=True)
     print(f"  T2I_CKPT_PATH={_fmt_ckpt(T2I_CKPT_PATH)}", flush=True)
     print(f"  T2V_CKPT_PATH={_fmt_ckpt(T2V_CKPT_PATH)}", flush=True)
-    print("[launch] bind config:", flush=True)
-    print(f"  GATEWAY {GATEWAY_HOST}:{GATEWAY_PORT}", flush=True)
-    print(f"  I2I     {I2I_HOST}:{I2I_PORT}", flush=True)
-    print(f"  T2I     {T2I_HOST}:{T2I_PORT}", flush=True)
-    print(f"  T2V     {T2V_HOST}:{T2V_PORT}", flush=True)
 
     processes = []
     try:
@@ -102,7 +92,7 @@ def main():
                 I2I_CKPT_PATH,
             )
         )
-        time.sleep(LAUNCH_INTERVAL_SEC)
+        time.sleep(1.5)
 
         processes.append(
             launch_service(
@@ -113,7 +103,7 @@ def main():
                 T2I_CKPT_PATH,
             )
         )
-        time.sleep(LAUNCH_INTERVAL_SEC)
+        time.sleep(1.5)
 
         processes.append(
             launch_service(
@@ -124,7 +114,7 @@ def main():
                 T2V_CKPT_PATH,
             )
         )
-        time.sleep(LAUNCH_INTERVAL_SEC)
+        time.sleep(1.5)
 
         processes.append(
             launch_service(

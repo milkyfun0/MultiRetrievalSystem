@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import json
-import logging
 from pathlib import Path
 from typing import Any
 
@@ -20,8 +19,6 @@ from app.services.object_service import ObjectService
 from app.utils.batch import batched
 from app.utils.time import now_iso
 from app.workers.local_jobs import LocalJobRunner
-
-logger = logging.getLogger(__name__)
 
 
 class PrepareService:
@@ -525,7 +522,6 @@ class PrepareService:
             )
 
         items: list[dict[str, Any]] = []
-        demo_mode = bool(getattr(self.settings, "demo_mode", False))
         for raw in keys:
             self._raise_if_cancelled(cancel_event)
             path = Path(raw)
@@ -534,10 +530,6 @@ class PrepareService:
                 if linked_store:
                     path = Path(linked_store["resource_path"])
             if not path.exists():
-                # 演示模式：路径不存在时跳过并告警，避免一个坏路径打断整个建库
-                if demo_mode:
-                    logger.warning("[demo_mode] resource path not found, skipped: %s", raw)
-                    continue
                 raise FileNotFoundError(f"Resource path not found: {raw}")
             if store_type == StoreTypeEnum.FOLDER.value and path.is_dir():
                 items.extend(self._scan_folder(scene, path))
