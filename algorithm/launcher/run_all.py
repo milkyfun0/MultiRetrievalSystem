@@ -7,24 +7,29 @@ from pathlib import Path
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
 
-# ========= checkpoint 常量配置 =========
+# ========= checkpoint 配置（支持环境变量覆盖） =========
 # 为空字符串表示不加载权重，只初始化模型结构
-I2I_CKPT_PATH = ""
-T2I_CKPT_PATH = ""
-T2V_CKPT_PATH = ""
+# 局域网部署时通过 export I2I_CKPT_PATH=/path/to/ckpt 注入
+I2I_CKPT_PATH = os.getenv("I2I_CKPT_PATH", "")
+T2I_CKPT_PATH = os.getenv("T2I_CKPT_PATH", "")
+T2V_CKPT_PATH = os.getenv("T2V_CKPT_PATH", "")
 
-# ========= 端口配置 =========
-GATEWAY_HOST = "0.0.0.0"
-GATEWAY_PORT = 18080
+# ========= 监听地址/端口配置（支持环境变量覆盖） =========
+# 默认 0.0.0.0 以支持局域网访问，可通过环境变量收紧为 127.0.0.1
+GATEWAY_HOST = os.getenv("MMR_GATEWAY_HOST", "0.0.0.0")
+GATEWAY_PORT = int(os.getenv("MMR_GATEWAY_PORT", "18080"))
 
-I2I_HOST = "0.0.0.0"
-I2I_PORT = 18081
+I2I_HOST = os.getenv("MMR_I2I_HOST", "0.0.0.0")
+I2I_PORT = int(os.getenv("MMR_I2I_PORT", "18081"))
 
-T2I_HOST = "0.0.0.0"
-T2I_PORT = 18082
+T2I_HOST = os.getenv("MMR_T2I_HOST", "0.0.0.0")
+T2I_PORT = int(os.getenv("MMR_T2I_PORT", "18082"))
 
-T2V_HOST = "0.0.0.0"
-T2V_PORT = 18083
+T2V_HOST = os.getenv("MMR_T2V_HOST", "0.0.0.0")
+T2V_PORT = int(os.getenv("MMR_T2V_PORT", "18083"))
+
+# 启动间隔（大模型加载较慢，可调整）
+LAUNCH_INTERVAL_SEC = float(os.getenv("MMR_LAUNCH_INTERVAL_SEC", "1.5"))
 
 
 def _fmt_ckpt(v: str) -> str:
@@ -80,6 +85,11 @@ def main():
     print(f"  I2I_CKPT_PATH={_fmt_ckpt(I2I_CKPT_PATH)}", flush=True)
     print(f"  T2I_CKPT_PATH={_fmt_ckpt(T2I_CKPT_PATH)}", flush=True)
     print(f"  T2V_CKPT_PATH={_fmt_ckpt(T2V_CKPT_PATH)}", flush=True)
+    print("[launch] bind config:", flush=True)
+    print(f"  GATEWAY {GATEWAY_HOST}:{GATEWAY_PORT}", flush=True)
+    print(f"  I2I     {I2I_HOST}:{I2I_PORT}", flush=True)
+    print(f"  T2I     {T2I_HOST}:{T2I_PORT}", flush=True)
+    print(f"  T2V     {T2V_HOST}:{T2V_PORT}", flush=True)
 
     processes = []
     try:
@@ -92,7 +102,7 @@ def main():
                 I2I_CKPT_PATH,
             )
         )
-        time.sleep(1.5)
+        time.sleep(LAUNCH_INTERVAL_SEC)
 
         processes.append(
             launch_service(
@@ -103,7 +113,7 @@ def main():
                 T2I_CKPT_PATH,
             )
         )
-        time.sleep(1.5)
+        time.sleep(LAUNCH_INTERVAL_SEC)
 
         processes.append(
             launch_service(
@@ -114,7 +124,7 @@ def main():
                 T2V_CKPT_PATH,
             )
         )
-        time.sleep(1.5)
+        time.sleep(LAUNCH_INTERVAL_SEC)
 
         processes.append(
             launch_service(

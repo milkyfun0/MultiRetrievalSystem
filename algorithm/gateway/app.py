@@ -1,3 +1,5 @@
+import os
+
 import httpx
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
@@ -8,13 +10,23 @@ from common.api_utils import normalize_request
 
 app = FastAPI(title="multimodal gateway")
 
+# Worker 地址支持通过环境变量覆盖，便于将 worker 拆到不同算力节点
+# 例如：export MMR_WORKER_I2I_URL=http://10.0.0.21:18081
 WORKERS = {
-    "i2i": "http://127.0.0.1:18081",
-    "t2i": "http://127.0.0.1:18082",
-    "t2v": "http://127.0.0.1:18083",
+    "i2i": os.getenv("MMR_WORKER_I2I_URL", "http://127.0.0.1:18081"),
+    "t2i": os.getenv("MMR_WORKER_T2I_URL", "http://127.0.0.1:18082"),
+    "t2v": os.getenv("MMR_WORKER_T2V_URL", "http://127.0.0.1:18083"),
 }
 
-DEFAULT_TIMEOUT = httpx.Timeout(connect=5.0, read=300.0, write=300.0, pool=5.0)
+# t2v 编码相对耗时，read 超时单独放宽；其他统一沿用
+_READ_TIMEOUT = float(os.getenv("MMR_GATEWAY_READ_TIMEOUT", "300"))
+_CONNECT_TIMEOUT = float(os.getenv("MMR_GATEWAY_CONNECT_TIMEOUT", "5"))
+DEFAULT_TIMEOUT = httpx.Timeout(
+    connect=_CONNECT_TIMEOUT,
+    read=_READ_TIMEOUT,
+    write=_READ_TIMEOUT,
+    pool=_CONNECT_TIMEOUT,
+)
 
 
 class EncodeRequest(BaseModel):
