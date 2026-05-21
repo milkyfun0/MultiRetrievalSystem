@@ -73,7 +73,7 @@ cd algorithm
 python launcher/run_all.py
 ```
 
-启动器会拉起 4 个服务，全部绑定 `0.0.0.0`，详见 [`algorithm/launcher/run_all.py`](../algorithm/launcher/run_all.py)。
+启动器会拉起 4 个服务，全部绑定 `0.0.0.0`，详见 [`algorithm/launcher/run_all.py`](algorithm/launcher/run_all.py)。
 
 ### 3.2 启动后端（关键改动）
 
@@ -98,7 +98,7 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000
 参数说明：
 
 - `--host 0.0.0.0`：监听所有网口，使后端可被局域网访问。
-- `MMR_PUBLIC_BASE_URL`：被 [`backend/app/core/config.py`](../backend/app/core/config.py) 和 [`backend/app/services/object_service.py`](../backend/app/services/object_service.py) 用于拼接上传文件的预览 URL。如果不设置，前端在演示机会拿到 `http://127.0.0.1:8000/...`，导致图片预览失败（浏览器会去访问演示机本地）。
+- `MMR_PUBLIC_BASE_URL`：被 [`backend/app/core/config.py`](backend/app/core/config.py) 和 [`backend/app/services/object_service.py`](backend/app/services/object_service.py) 用于拼接上传文件的预览 URL。如果不设置，前端在演示机会拿到 `http://127.0.0.1:8000/...`，导致图片预览失败（浏览器会去访问演示机本地）。
 - 生产演示**不要加 `--reload`**，更稳定。
 
 ### 3.3 放行 Windows 防火墙
@@ -202,7 +202,7 @@ Error: connect ECONNREFUSED 127.0.0.1:8000
 
 ## 5. 方案 B：永久修复 `vite.config.ts`（可选，一次性改好）
 
-如果不想每次启动都敲 `VITE_BACKEND_PROXY_TARGET=...`，可以一次性改 [`frontend/vite.config.ts`](../frontend/vite.config.ts) 让它正确加载 `.env.local`：
+如果不想每次启动都敲 `VITE_BACKEND_PROXY_TARGET=...`，可以一次性改 [`frontend/vite.config.ts`](frontend/vite.config.ts) 让它正确加载 `.env.local`：
 
 ```ts
 import { defineConfig, loadEnv } from 'vite'
@@ -243,7 +243,7 @@ export default defineConfig(({ mode }) => {
 VITE_BACKEND_PROXY_TARGET=http://10.98.229.114:8000
 ```
 
-⚠️ **不要**再额外设置 `VITE_API_BASE_URL=/api/v1`：前端代码（如 [`frontend/src/api/health.ts`](../frontend/src/api/health.ts)、[`frontend/src/api/stores.ts`](../frontend/src/api/stores.ts)）已经在每个调用里写死了 `/api/v1/xxx`，axios 的 `baseURL` 留空即可；再加前缀会拼成 `/api/v1/api/v1/health` 导致代理报错。
+⚠️ **不要**再额外设置 `VITE_API_BASE_URL=/api/v1`：前端代码（如 [`frontend/src/api/health.ts`](frontend/src/api/health.ts)、[`frontend/src/api/stores.ts`](frontend/src/api/stores.ts)）已经在每个调用里写死了 `/api/v1/xxx`，axios 的 `baseURL` 留空即可；再加前缀会拼成 `/api/v1/api/v1/health` 导致代理报错。
 
 修改后用普通命令启动即可：
 
@@ -374,4 +374,4 @@ VITE_BACKEND_PROXY_TARGET=http://10.98.229.114:8000 npm run dev
 
 ---
 
-> 本指南仅涉及启动命令与环境变量；如采用方案 B，会修改 [`frontend/vite.config.ts`](../frontend/vite.config.ts) 一处，其他源码无需改动。
+> 本指南仅涉及启动命令与环境变量；如采用方案 B，会修改 [`frontend/vite.config.ts`](frontend/vite.config.ts) 一处，其他源码无需改动。
