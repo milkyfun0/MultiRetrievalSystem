@@ -1,1 +1,42 @@
+# 模型文件
 /algorithm/ImageRetrieval/models_data/base_distill/student/TinyCLIP-ViT-8M-16-Text-3M-YFCC15M.pt
+
+# IDE配置文件
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# 日志文件
+*.log
+logs/
+
+# Python缓存
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# 操作系统文件
+.DS_Store
+Thumbs.db
+
+# JoyCode配置
+.joycode/
+
+# 临时文件
+tmp/
+temp/
+*.tmp
+
+# 测试数据
+test_data/
+tests/test_data/
+
