@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Optional
 
 from fastapi import HTTPException, status
 
@@ -8,7 +8,7 @@ class ApiError(HTTPException):
         self,
         code: str,
         message: str,
-        detail: dict[str, Any] | None = None,
+        detail: Optional[dict[str, Any]] = None,
         retryable: bool = False,
         status_code: int = status.HTTP_400_BAD_REQUEST,
     ):

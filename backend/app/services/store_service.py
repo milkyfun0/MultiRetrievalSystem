@@ -1,3 +1,5 @@
+from typing import Optional
+
 from fastapi import status
 
 from app.core.enums import StoreStatusEnum
@@ -12,13 +14,13 @@ class StoreService:
     def create_store(
         self,
         store_name: str,
-        store_description: str | None,
+        store_description: Optional[str],
         scene: str,
         store_type: str,
         resource_path: str,
         model_alias: str,
-        preprocess_mode: str | None = None,
-        interval_sec: int | None = None,
+        preprocess_mode: Optional[str] = None,
+        interval_sec: Optional[int] = None,
     ):
         existing = self.store_repo.find_by_name(scene, store_type, store_name)
         if existing:

@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Optional
 
 from pydantic import BaseModel
 
@@ -7,21 +7,21 @@ class JobStatusResponse(BaseModel):
     job_id: str
     state: str
     progress: int
-    message: str | None = None
-    error: str | None = None
-    result: dict[str, Any] | None = None
-    phase: str | None = None
+    message: Optional[str] = None
+    error: Optional[str] = None
+    result: Optional[dict[str, Any]] = None
+    phase: Optional[str] = None
     can_terminate: bool = False
-    terminated_at: str | None = None
-    terminate_reason: str | None = None
+    terminated_at: Optional[str] = None
+    terminate_reason: Optional[str] = None
 
 
 class TaskTerminateRequest(BaseModel):
-    reason: str | None = None
+    reason: Optional[str] = None
 
 
 class TaskTerminateResponse(BaseModel):
     job_id: str
     state: str
     message: str
-    terminated_at: str | None = None
+    terminated_at: Optional[str] = None
