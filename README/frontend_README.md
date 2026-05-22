@@ -1,271 +1,242 @@
-# 多模态检索系统前端技术说明文档（当前实现版）
+# 前端应用组件文档
 
-## 1. 文档目的
-
-本文档面向未直接参与前端开发的后端与算法同学，说明当前多模态检索系统前端的实现结构、页面能力、接口对齐方式、状态流转、媒体预览链路、已知限制与联调要点。
-
-本文档重点回答以下问题。
-
-- 当前前端到底提供了哪些页面与功能
-- 前端如何调用后端接口
-- 前端向后端发送什么格式的数据
-- 前端如何消费后端返回的数据
-- 图像检索、视频检索、资源准备、资源管理分别怎么走
-- 哪些问题属于前端，哪些问题属于后端或算法侧
-- 联调时最容易踩坑的地方有哪些
-
-本文档基于当前已经完成的前端版本整理，重点描述“实际实现与当前约定”，而不是理想化设计。
+本文档面向后端与算法服务对接人员、以及新加入前端开发的同学，说明前端的功能结构、技术架构、接口依赖、状态管理及常见问题。
 
 ---
 
-## 2. 一句话理解当前前端
-
-当前前端是一个面向多模态检索系统的 Web 界面，主要承担三类职责。
-
-- 为用户提供检索入口，包括视频检索、图像检索、以图搜图
-- 为管理员或开发人员提供资源准备入口，用于新建向量化任务并跟踪任务状态
-- 为管理员或开发人员提供资源管理入口，用于查看已有检索库、查看统计信息、删除检索库
-
-前端不负责模型推理，不负责索引构建，不负责文件持久化，也不负责结果排序逻辑。前端只负责页面交互、参数组织、接口调用、状态展示与错误提示。
-
----
-
-## 3. 当前前端页面与导航结构
-
-### 3.1 顶部一级导航
-
-当前前端包含三个一级入口。
-
-- 检索
-- 资源准备
-- 资源管理
-
-### 3.2 页面职责
-
-#### 检索页
-
-用于发起三类检索任务。
-
-- 视频检索，对应业务 scene `Text2Video`
-- 图像检索，对应业务 scene `Text2Image`
-- 以图搜图，对应业务 scene `Image2Image`
-
-该页面提供以下能力。
-
-- 模式切换
-- 检索库类型与具体检索库选择
-- 文本输入或查询图片上传
-- 检索参数配置
-- 结果展示，支持网格和 Rank 流视图
-- 结果详情弹窗
-- 当前检索库信息展示
-
-#### 资源准备页
-
-用于创建向量化任务并查看任务执行情况。
-
-该页面提供以下能力。
-
-- 任务模式选择
-- 检索库类型选择
-- 库名称输入
-- 库备注输入
-- 资源路径或库标识输入
-- 模型版本、批量大小、强制重建设置
-- 同名库冲突时合库确认
-- 任务列表展示
-- 任务详情弹窗
-- 失败任务重试与状态刷新
-
-#### 资源管理页
-
-用于查看当前已有检索库并删除检索库。
-
-该页面提供以下能力。
-
-- 查看检索库列表
-- 查看库状态、模式、备注、文件数、向量数
-- 删除检索库
-- 删除后根据后端返回信息提示用户
-
----
-
-## 4. 前端与后端、算法端的职责边界
-
-### 4.1 前端负责什么
-
-- 采集用户输入
-- 对输入做基础校验
-- 调用后端 API
-- 展示结果与任务状态
-- 对后端错误码或错误信息做用户可理解的提示
-- 在图搜图场景先上传查询图片，再使用后端返回的 `object_key` 发起检索
-
-### 4.2 后端负责什么
-
-- 对外提供统一业务接口
-- 管理 store、job、object、vector 等元数据
-- 调用算法端完成编码
-- 管理向量索引
-- 返回检索结果
-- 返回任务进度与统计
-- 负责资源删除、预览地址、自动准备等业务逻辑
-
-### 4.3 算法端负责什么
-
-- 仅负责把文本、图像或视频编码成 embedding
-- 不负责检索库管理
-- 不负责任务状态
-- 不负责预览地址生成
-- 不负责结果卡信息组织
-
-### 4.4 关键边界结论
-
-- 前端只与后端业务接口交互，不直接调用算法端 `/encode`
-- 前端使用业务 scene `Text2Video`、`Text2Image`、`Image2Image`
-- 算法端内部 scene `t2v`、`t2i`、`i2i` 的映射由后端承担
-
----
-
-## 5. 当前前端支持的核心业务流程
-
-## 5.1 文本检索视频
-
-适用于 `Text2Video`。
-
-流程如下。
-
-1. 用户在搜索页选择“视频检索”
-2. 输入文本 query
-3. 选择检索库类型，如文件夹
-4. 选择具体检索库
-5. 点击搜索
-6. 前端调用 `POST /api/v1/search`
-7. 后端返回结果列表与元信息
-8. 前端展示结果卡与详情弹窗
-
-## 5.2 文本检索图像
-
-适用于 `Text2Image`。
-
-流程与文本检索视频基本一致，只是 scene 不同，返回的媒体类型通常为 image。
-
-## 5.3 以图搜图
-
-适用于 `Image2Image`。
-
-该流程与文本检索不同，查询图像不会直接以本地路径传给后端检索接口，而是分两步。
-
-1. 用户在搜索页切换到“以图搜图”
-2. 用户选择查询图片
-3. 前端先调用 `POST /api/v1/uploads/query-image`
-4. 后端返回 `object_key` 与 `preview_url`
-5. 前端把这个 `object_key` 存入查询图片列表
-6. 用户点击搜索
-7. 前端调用 `POST /api/v1/search`，在 `input.image_object_keys` 中传入这个 `object_key`
-8. 后端返回检索结果
-9. 前端渲染结果列表
-
-这一点非常关键。当前前端不会在图搜图检索时直接把查询图片本机路径传给后端，而是先上传查询图片，再用对象标识进行搜索。
-
-## 5.4 创建向量化任务
-
-1. 用户进入资源准备页
-2. 选择任务模式与检索库类型
-3. 输入库名称与备注
-4. 输入资源路径或库标识
-5. 配置模型版本、批量大小、强制重建等参数
-6. 点击“提交向量化任务”
-7. 前端调用 `POST /api/v1/vectorize`
-8. 如果返回成功，则刷新任务列表
-9. 如果同名库冲突且后端返回 409，则前端弹出是否合库确认
-10. 若用户确认，则带 `merge_on_name_conflict=true` 重试提交
-
-## 5.5 删除检索库
-
-1. 用户进入资源管理页
-2. 查看已有检索库列表
-3. 点击删除操作
-4. 前端弹出确认
-5. 前端调用 `DELETE /api/v1/stores/{store_id}`
-6. 后端删除索引文件、映射关系与数据库记录
-7. 前端根据返回的 `status=deleted` 与 `message` 进行提示并刷新列表
-
----
-
-## 6. 前端当前页面状态模型
-
-## 6.1 检索页状态
-
-当前检索页核心状态包括。
-
-- `mode`，任务模式
-- `storeType`，检索库类型
-- `selectedStoreId`，具体检索库 ID
-- `queryText`，文本查询
-- `uploadedItems`，图搜图时已上传的查询图片列表
-- `queryImageUploading`，查询图片上传中状态
-- `searchState`，搜索状态
-- `results`，结果列表
-- `resultCount`，结果数
-- `detailModalVisible`，结果详情弹窗开关
-
-建议从后端角度理解，这表示前端会始终维护“当前查询上下文”。后端返回的数据不仅要能用于一次性渲染，还要能支持用户继续查看详情、切换上一条下一条、切换网格和 Rank 流视图。
-
-## 6.2 资源准备页状态
-
-- 表单状态
-- 当前任务列表
-- 当前选中的任务详情
-- 提交中状态
-- 轮询状态
-- 错误提示状态
-
-## 6.3 资源管理页状态
-
-- 当前库列表
-- 当前过滤条件
-- 删除中状态
-- 当前选中的库详情
-
----
-
-## 7. 前端对后端接口的依赖总览
-
-当前前端依赖以下后端接口。
-
-```text
-GET    /api/v1/health
-GET    /api/v1/stores
-GET    /api/v1/stores/{store_id}
-GET    /api/v1/stores/{store_id}/status
-DELETE /api/v1/stores/{store_id}
-
-POST   /api/v1/search
-POST   /api/v1/vectorize
-GET    /api/v1/tasks/{job_id}
-
-POST   /api/v1/uploads/query-image
-GET    /api/v1/media/preview?object_key=...
+## 1. 组件概述
+
+前端是一个基于 **Vue 3 + TypeScript** 的单页应用（SPA），使用 **Vite** 构建，**Element Plus** 作为 UI 组件库。
+
+它为用户提供三类能力：
+- **检索**：发起多模态检索（文搜视频、文搜图、以图搜图），展示结果卡片与详情弹窗
+- **资源准备**：提交向量化任务，查看任务进度与详情，支持手动终止任务
+- **资源管理**：查看和删除已有检索库
+
+### 技术栈
+
+| 层 | 技术 |
+|---|---|
+| 框架 | Vue 3（Composition API + `<script setup>`） |
+| 语言 | TypeScript |
+| 构建工具 | Vite 6 |
+| 路由 | Vue Router 4 |
+| 状态管理 | Pinia |
+| HTTP 客户端 | Axios |
+| UI 组件库 | Element Plus 2 |
+
+### 目录结构
+
+```
+frontend/src/
+├── api/                    # 后端接口封装
+│   ├── client.ts           # Axios 实例（反代 /api 路径）
+│   ├── search.ts           # 检索、查询图片上传
+│   ├── prepare.ts          # 向量化任务提交、状态查询、终止
+│   └── stores.ts           # 检索库增删改查
+├── components/
+│   ├── common/             # 通用组件（导航栏、状态徽章、分页等）
+│   ├── search/             # 检索页组件（搜索输入、结果卡、详情弹窗等）
+│   └── prepare/            # 资源准备组件（表单、任务列表、任务详情）
+├── composables/
+│   ├── useLayoutMode.ts    # 视图模式（网格/流式）切换逻辑
+│   └── usePolling.ts       # 轮询工具
+├── stores/
+│   ├── search.ts           # 检索页全局状态（Pinia）
+│   └── prepare.ts          # 资源准备页全局状态（Pinia）
+├── types/                  # TypeScript 类型定义（DTO、VM、枚举）
+├── utils/
+│   ├── mapper.ts           # DTO → ViewModel 映射函数
+│   ├── display.ts          # 枚举中文映射（场景名、库类型、状态等）
+│   ├── constants.ts        # 常量（场景列表、库类型列表）
+│   └── normalize.ts        # 输入归一化（批量文本拆行等）
+└── views/
+    ├── SearchPage.vue      # 检索页
+    ├── PreparePage.vue     # 资源准备页
+    └── StoreManagePage.vue # 资源管理页
 ```
 
-这些接口中，最关键的是 `/search`、`/vectorize`、`/tasks/{job_id}`、`/stores*`、`/uploads/query-image`、`/media/preview`。
+---
+
+## 2. 快速上手
+
+### 2.1 前提条件
+
+- Node.js ≥ 16
+- 后端服务已启动（默认 `http://127.0.0.1:8000`）
+
+### 2.2 安装依赖
+
+```bash
+cd frontend
+npm install
+```
+
+### 2.3 启动开发服务器
+
+```bash
+cd frontend
+npm run dev
+```
+
+成功后访问 `http://localhost:5173`。
+
+### 2.4 构建生产版本
+
+```bash
+cd frontend
+npm run build
+# 产物位于 frontend/dist/
+```
+
+### 2.5 预览构建产物
+
+```bash
+npm run preview
+```
 
 ---
 
-## 8. 传输格式说明
+## 3. 配置说明
 
-## 8.1 检索请求格式
+### 3.1 环境变量
 
-### 文本检索视频 / 文本检索图像
+复制 `.env.example` 为 `.env.local` 并按需修改：
 
-请求体格式如下。
+| 变量 | 默认值 | 说明 |
+|---|---|---|
+| `VITE_BACKEND_PROXY_TARGET` | `http://127.0.0.1:8000` | 开发模式下 `/api` 请求的反代目标 |
+
+```bash
+cp .env.example .env.local
+# 修改 VITE_BACKEND_PROXY_TARGET 为后端地址
+```
+
+### 3.2 Vite 代理配置
+
+`vite.config.ts` 中已配置反代，开发模式下所有 `/api` 请求自动转发到后端：
+
+```ts
+server: {
+  port: 5173,
+  proxy: {
+    '/api': {
+      target: process.env.VITE_BACKEND_PROXY_TARGET || 'http://127.0.0.1:8000',
+      changeOrigin: true,
+    },
+  },
+},
+```
+
+**跨机访问时**（后端在另一台机器），只需修改 `VITE_BACKEND_PROXY_TARGET` 重启 dev server，无需修改代码。
+
+### 3.3 多机演示场景
+
+当算力机和演示机分离时：
+
+```bash
+# 演示机上运行前端
+VITE_BACKEND_PROXY_TARGET=http://<算力机IP>:8000 npm run dev
+```
+
+或将产物打包后用 nginx 反代：
+
+```nginx
+location /api/ {
+    proxy_pass http://<算力机IP>:8000/api/;
+}
+```
+
+---
+
+## 4. 页面功能说明
+
+### 4.1 检索页（SearchPage.vue）
+
+检索页是系统的核心入口，支持三种检索模式的统一操作流程。
+
+**主要功能：**
+
+- 顶部 Tab 切换模式（视频检索 / 图像检索 / 以图搜图）
+- 按库类型筛选并选择具体检索库
+- 文本输入框（文本模式）或图片上传区（以图搜图模式）
+- 高级参数面板（topk、auto_prepare、uncertainty_weight 等）
+- 结果展示（网格视图 / Rank 流视图切换）
+- 结果详情弹窗（支持前后条导航）
+- 当前检索库信息卡片（显示文件数、向量数等）
+
+**以图搜图的特殊流程：**
+
+1. 用户选择本地图片 → 前端调用 `POST /api/v1/uploads/query-image` 上传
+2. 后端返回 `object_key` → 前端记录到 `uploadedQueryImages` 列表
+3. 用户点击搜索 → 前端用 `object_key` 发起检索请求
+
+前端**不会**把浏览器本地文件路径传给后端，必须先上传获取 `object_key`。
+
+### 4.2 资源准备页（PreparePage.vue）
+
+用于创建向量化任务，支持所有三种库类型（Folder、DataBase、LongVideo）。
+
+**主要功能：**
+
+- 库类型和模式选择
+- 库名称、备注输入
+- 资源路径或库标识输入
+- 高级参数（模型版本、批次大小、强制重建）
+- LongVideo 专属参数（预处理模式、间隔秒数）
+- 同名库冲突时弹窗确认是否合库
+- 任务列表展示（显示进度、状态、阶段）
+- 任务详情弹窗（统计文件数/向量数/批次）
+- 支持手动终止正在运行的任务
+
+**LongVideo 参数自动联动：**
+
+选择 `LongVideo` 库类型时，`preprocess_mode` 和 `interval_sec` 会根据 `scene` 自动设置默认值（Text2Video → segment + 5s，其他 → frame + 3s）。
+
+### 4.3 资源管理页（StoreManagePage.vue）
+
+用于查看和删除已有检索库，支持按场景和库类型筛选，带分页。
+
+**主要功能：**
+
+- 筛选与分页展示检索库列表
+- 顶部统计卡片（总库数、可用库数、长视频库数、总向量数）
+- 查看单个检索库详情弹窗（基础标识、来源路径、预处理配置）
+- 删除检索库（二次确认，成功后刷新列表）
+
+**删除操作说明：** 前端调用 `DELETE /api/v1/stores/{store_id}`，后端会同步清理索引文件与托管资源，该操作不可撤销，UI 上做了二次确认弹窗。
+
+---
+
+## 5. 与后端接口的对接
+
+### 5.1 接口依赖总览
+
+```
+GET    /api/v1/health                      # 服务探测
+GET    /api/v1/stores                      # 获取检索库列表
+GET    /api/v1/stores/{store_id}           # 获取检索库详情
+GET    /api/v1/stores/{store_id}/status    # 获取库状态（轻量）
+DELETE /api/v1/stores/{store_id}           # 删除检索库
+
+POST   /api/v1/search                      # 发起检索
+POST   /api/v1/vectorize                   # 提交向量化任务
+GET    /api/v1/tasks/{job_id}              # 查询任务状态
+POST   /api/v1/tasks/{job_id}/terminate    # 终止任务
+
+POST   /api/v1/uploads/query-image         # 上传查询图片
+GET    /api/v1/media/preview               # 预览媒体文件
+```
+
+### 5.2 检索请求格式
+
+**文本检索（Text2Video / Text2Image）：**
 
 ```json
 {
   "scene": "Text2Video",
   "store_type": "Folder",
-  "store_id": "store_001",
+  "store_id": "store_xxx",
   "topk": 10,
   "need_vectorize": false,
   "input": {
@@ -276,607 +247,304 @@ GET    /api/v1/media/preview?object_key=...
     "model_alias": "prod",
     "auto_prepare": true,
     "batch_mode": false,
-    "uncertainty_weight": 0.6
+    "uncertainty_weight": 0.6,
+    "return_detail_meta": false
   }
 }
 ```
 
-其中：
-
-- `scene` 是业务模式
-- `store_type` 是库类型
-- `store_id` 是具体库
-- `input.text` 是文本查询
-- `input.image_object_keys` 在文本场景下为空数组
-- `params.auto_prepare` 用于允许后端自动触发准备逻辑
-
-### 以图搜图
-
-请求体格式如下。
+**以图搜图（Image2Image）：**
 
 ```json
 {
   "scene": "Image2Image",
   "store_type": "Folder",
-  "store_id": "store_001",
+  "store_id": "store_xxx",
   "topk": 10,
-  "need_vectorize": false,
   "input": {
     "text": null,
-    "image_object_keys": [
-      "query/image/20260415/demo_query_001.jpg"
-    ]
+    "image_object_keys": ["uploads/query/abc123.jpg"]
   },
   "params": {
     "model_alias": "prod",
-    "auto_prepare": true,
-    "batch_mode": false
+    "auto_prepare": true
   }
 }
 ```
 
-这里的 `image_object_keys` 来源于 `POST /api/v1/uploads/query-image` 的返回值。
+### 5.3 向量化任务请求格式
 
-## 8.2 查询图片上传格式
-
-前端上传查询图片时使用 `multipart/form-data`。
-
-请求：
-
-```text
-POST /api/v1/uploads/query-image
-Content-Type: multipart/form-data
-```
-
-表单字段：
-
-- `file`，单个图片文件
-
-理想返回格式如下。
+**Folder / DataBase 类型：**
 
 ```json
 {
-  "object_key": "query/image/20260415/demo_query_001.jpg",
-  "preview_url": "/api/v1/media/preview?object_key=query%2Fimage%2F20260415%2Fdemo_query_001.jpg"
+  "scene": "Image2Image",
+  "store_type": "Folder",
+  "store_name": "飞机图像库",
+  "store_description": "测试用飞机图片集",
+  "merge_on_name_conflict": null,
+  "keys": ["/absolute/path/to/images/"],
+  "params": {
+    "model_alias": "prod",
+    "batch_size": 64,
+    "force_rebuild": false
+  }
 }
 ```
 
-当前前端会把返回值映射成内部查询图片项：
-
-```ts
-{
-  objectKey: string,
-  previewUrl: string,
-  name?: string
-}
-```
-
-## 8.3 向量化任务提交格式
-
-当前资源准备页向后端提交的格式如下。
+**LongVideo 类型（额外参数）：**
 
 ```json
 {
   "scene": "Text2Video",
-  "store_type": "Folder",
-  "keys": [
-    "F:\\Code\\RetrievalSys\\backend\\test_data\\VideoRetrieval"
-  ],
-  "store_name": "视频库",
-  "store_description": "视频样例集",
-  "merge_on_name_conflict": null,
+  "store_type": "LongVideo",
+  "store_name": "演讲视频库",
+  "keys": ["/absolute/path/to/long_video.mp4"],
   "params": {
     "model_alias": "prod",
     "batch_size": 64,
-    "force_rebuild": true
+    "force_rebuild": false,
+    "preprocess_mode": "segment",
+    "interval_sec": 5
   }
 }
 ```
 
-说明如下。
+### 5.4 同名库冲突处理逻辑
 
-- `keys` 是资源路径或资源标识数组
-- `store_name` 是用户定义的库名称，不再由 `keys` 隐式承担命名作用
-- `store_description` 是备注说明
-- `merge_on_name_conflict` 支持 `null`、`true`、`false`
-- `params.force_rebuild` 表示是否强制重建索引
+1. 首次提交时 `merge_on_name_conflict: null`
+2. 后端返回 409 → 前端弹出 `window.confirm` 询问用户
+3. 用户确认合库 → 重新提交，附 `merge_on_name_conflict: true`
+4. 用户取消 → 提示修改库名，不自动重试
 
-## 8.4 同名库冲突处理
+### 5.5 任务状态轮询
 
-当后端检测到同名库冲突时，前端按如下逻辑处理。
-
-### 第一次提交
-
-```json
-{
-  "merge_on_name_conflict": null
-}
-```
-
-如果后端返回 409，则前端弹窗询问用户是否合库。
-
-### 用户确认合库
-
-前端再次提交：
-
-```json
-{
-  "merge_on_name_conflict": true
-}
-```
-
-### 用户拒绝合库
-
-前端不会自动再次提交，而是要求用户修改库名称。
-
-## 8.5 任务状态接口返回格式
-
-当前前端能消费的任务状态格式大致如下。
-
-```json
-{
-  "job_id": "prep_20260411_0002",
-  "state": "success",
-  "progress": 100,
-  "message": "任务执行完成",
-  "error": null,
-  "result": {
-    "store_id": "store_72d23861",
-    "store_name": "视频库",
-    "store_description": "视频",
-    "scanned_files": 3,
-    "new_files": 3,
-    "new_vectors": 3,
-    "skipped_files": 0,
-    "skipped_vectors": 0,
-    "file_count": 3,
-    "vector_count": 3,
-    "failed_batches": 0,
-    "processed_batches": 1,
-    "total_batches": 1,
-    "final_index_id": "index_store_72d23861"
-  }
-}
-```
-
-前端已经不再把 `result` 整体作为 JSON 字符串直接展示，而是拆成以下几个板块。
-
-- 基础信息
-- 文件与向量统计
-- 批次执行情况
-- 失败原因
-
-## 8.6 删除库接口返回格式
-
-后端删除库后，前端期望返回如下结构。
-
-```json
-{
-  "store_id": "store_001",
-  "status": "deleted",
-  "message": "检索库已删除, 索引文件与映射关系已清理"
-}
-```
-
-前端根据 `status=deleted` 判断删除成功，并展示 `message`。
-
-## 8.7 检索结果返回格式
-
-当前前端消费的结果项关键字段如下。
-
-```json
-{
-  "rank": 1,
-  "score": 0.85,
-  "media_type": "video",
-  "object_key": "E:\\Code\\RetrievalSys\\test_data\\VideoRetrieval\\video80.mp4",
-  "preview_url": null,
-  "source_label": "Folder"
-}
-```
-
-前端会把它映射成内部 ViewModel：
+前端在打开任务详情弹窗期间，会自动轮询任务状态：
 
 ```ts
-{
-  rank: number,
-  score: number,
-  mediaType: 'image' | 'video',
-  objectKey: string,
-  thumbnailUrl: string,
-  sourceLabel: string
+// composables/usePolling.ts
+// 每隔固定间隔调用 getTaskStatus(jobId)
+// 收到 success / failed / terminated 后停止轮询
+```
+
+任务状态字段 `phase` 对应当前执行阶段，前端将其渲染为进度提示文字：
+
+| phase | 显示文字 |
+|---|---|
+| `validating` | 扫描验证资源 |
+| `preprocessing` | 长视频预处理中 |
+| `vectorizing` | 向量化编码中 |
+| `saving` | 写入索引 |
+
+---
+
+## 6. 状态管理
+
+前端使用 **Pinia** 管理全局状态。
+
+### 6.1 检索页状态（`stores/search.ts`）
+
+| 状态 | 说明 |
+|---|---|
+| `mode` | 当前检索模式（Text2Video / Text2Image / Image2Image） |
+| `storeType` | 当前库类型 |
+| `selectedStoreId` | 当前选中库 ID |
+| `queryText` | 文本输入 |
+| `uploadedQueryImages` | 已上传的查询图片列表（含 objectKey、previewUrl） |
+| `searchState` | idle / validating / searching / success / empty / error |
+| `results` | 检索结果 ViewModel 列表 |
+| `detailModalVisible` | 结果详情弹窗开关 |
+| `detailCurrentIndex` | 当前查看的结果索引 |
+
+`searchState` 的流转：
+
+```
+idle → validating（点击搜索）
+     → searching（参数验证通过，发起请求）
+     → success（有结果）
+     → empty（无结果或库 preparing）
+     → error（请求失败）
+```
+
+### 6.2 资源准备页状态（`stores/prepare.ts`）
+
+| 状态 | 说明 |
+|---|---|
+| `form` | 表单字段（scene、storeType、storeName、keys 等） |
+| `tasks` | 当前会话内的任务 ViewModel 列表 |
+| `currentTaskId` | 当前查看的任务 ID |
+| `submitting` | 任务提交中状态 |
+| `taskDetailVisible` | 任务详情弹窗开关 |
+
+### 6.3 ViewModel 设计
+
+前端把后端 DTO 映射为 ViewModel，隔离展示逻辑：
+
+| DTO | ViewModel |
+|---|---|
+| `SearchResultItemDTO` | `SearchResultCardVM`（含 `thumbnailUrl`、`mediaType`） |
+| `TaskStatusResponseDTO` | `VectorizeTaskVM`（含格式化时间、阶段文字等） |
+
+映射逻辑集中在 `utils/mapper.ts`。
+
+---
+
+## 7. 枚举值的中文映射
+
+前端统一在 `utils/display.ts` 中定义展示文字，后端/接口仍使用英文字段值：
+
+| 后端字段值 | 前端显示 |
+|---|---|
+| `Text2Video` | 视频检索 |
+| `Text2Image` | 图像检索 |
+| `Image2Image` | 以图搜图 |
+| `Folder` | 文件夹 |
+| `DataBase` | 数据库 |
+| `LongVideo` | 长视频 |
+| `not_ready` | 未准备 |
+| `preparing` | 准备中 |
+| `ready` | 已就绪 |
+| `failed` | 失败 |
+| `pending` | 等待中 |
+| `running` | 执行中 |
+| `success` | 成功 |
+| `terminated` | 已终止 |
+| `segment` | 视频切片 |
+| `frame` | 抽帧模式 |
+
+---
+
+## 8. 媒体预览链路
+
+### 8.1 图片预览
+
+图片预览链路简单可靠：
+
+1. 后端返回 `preview_url`（已包含完整 URL）
+2. 前端用 `<img :src="preview_url">` 直接展示
+3. 若 `preview_url` 为空，fallback 到 `/api/v1/media/preview?object_key=...`
+
+### 8.2 视频预览
+
+视频预览链路更复杂，涉及多个因素：
+
+- 前端使用 `<video controls :src="preview_url">` 播放
+- 后端 `/media/preview` 需支持 Range 请求（浏览器视频流需要）
+- 视频编码必须为浏览器可播放格式（推荐 H.264/AAC in MP4）
+
+**结果卡中视频缩略图：** 前端目前使用 `<video>` 标签尝试显示，是否能显示首帧取决于浏览器行为与视频格式。
+
+**详情弹窗中的视频：** 详情弹窗使用完整的 `<video controls>` 播放器，视频可用性主要取决于编码格式和后端预览接口的实现。
+
+**如果视频无法预览但检索结果正确：** 这不是检索失败，而是视频编码或预览接口问题，应排查后端 `/media/preview` 接口返回头和视频格式。
+
+### 8.3 长视频片段预览
+
+长视频建库后，检索结果的 `derive_type` 为 `segment` 或 `frame`：
+
+- `segment`：片段视频，使用视频播放器；结果卡同时显示时间范围（`segment_start_sec` ~ `segment_end_sec`）
+- `frame`：抽取的帧图片，使用图片展示；结果卡显示帧时间戳（`frame_timestamp_sec`）
+
+---
+
+## 9. 常见问题解答
+
+### Q1：前端启动后访问报 404 或一片空白
+
+- 确认 `npm install` 已执行
+- 确认 `npm run dev` 正常启动，端口 5173 未被占用
+- 检查浏览器控制台是否有 JS 报错
+
+### Q2：检索请求失败，报 Network Error 或 502
+
+- 确认后端服务已启动（`curl http://127.0.0.1:8000/api/v1/health`）
+- 确认 `VITE_BACKEND_PROXY_TARGET` 配置正确
+- 若后端在另一台机器，确认端口对外开放且网络可达
+
+### Q3：以图搜图时点击搜索没有反应或报"请先上传查询图片"
+
+- 以图搜图必须先上传图片才能发起检索
+- 上传入口在检索页切换到"以图搜图"模式后的图片上传区域
+- 确认 `/api/v1/uploads/query-image` 接口可用
+
+### Q4：检索结果有数据但图片/视频加载失败（小方块或黑屏）
+
+- 用 F12 查看图片/视频请求的实际 URL 和状态码
+- 若 URL 中包含 `127.0.0.1:8000` 但访问的是另一台机器 → 后端 `MMR_PUBLIC_BASE_URL` 未正确设置，需在后端机器上修改并重启后端
+- 若状态码 404 → 托管资源可能未正确复制，检查 `data/assets/` 目录
+- 若状态码 200 但视频黑屏 → 视频编码格式问题，建议转码为 H.264/MP4
+
+### Q5：资源准备提交后任务列表没有显示
+
+- 当前版本任务列表仅保存在当前会话内存中，刷新页面后历史任务列表不会保留
+- 提交成功后会自动打开任务详情弹窗，可从弹窗查看进度
+- 刷新页面后可通过 `GET /api/v1/tasks/{job_id}` 直接查询历史任务状态
+
+### Q6：任务进度长时间停在某个百分比不动
+
+- `vectorizing` 阶段（30%~95%）耗时最长，取决于资源数量和模型推理速度
+- 视频编码（T2V）每批次耗时可能达数分钟
+- 可在后端终端查看日志确认任务是否仍在运行
+
+### Q7：如何在生产环境部署前端
+
+```bash
+# 构建
+npm run build
+
+# 产物在 frontend/dist/
+# 用 nginx 托管静态文件，并反代 /api 到后端
+```
+
+参考 nginx 配置（简化版）：
+
+```nginx
+server {
+    listen 80;
+    root /path/to/frontend/dist;
+    index index.html;
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    location /api/ {
+        proxy_pass http://<后端地址>:8000/api/;
+        proxy_set_header Host $host;
+    }
 }
 ```
 
-其中 `thumbnailUrl` 的生成规则如下。
-
-1. 如果后端直接返回了 `preview_url`，优先使用 `preview_url`
-2. 如果没有 `preview_url`，则 fallback 到 `/api/v1/media/preview?object_key=...`
-
 ---
 
-## 9. 当前前端对返回字段的实际使用方式
+## 10. 与其他组件的集成
 
-## 9.1 搜索结果卡
+### 10.1 与后端的职责边界
 
-每个结果卡当前固定展示：
+| 职责 | 由谁承担 |
+|---|---|
+| 场景名（Text2Video）→ 算法 scene（t2v）映射 | 后端 |
+| 媒体文件路径管理 | 后端（托管到 data/assets/） |
+| 向量索引管理 | 后端（FAISS） |
+| 预览 URL 生成 | 后端（基于 MMR_PUBLIC_BASE_URL 实时构造） |
+| 任务状态持久化 | 后端（SQLite） |
+| 前端任务列表展示 | 前端（当前会话内存） |
 
-- Rank
-- 预览区
-- 分数
-- 来源
-- Object Key 简写
-- 查看详情按钮
+### 10.2 前端不直接调用算法服务
 
-前端对媒体类型的处理如下。
+前端通过后端 `/api/v1/search` 发起检索，后端内部调用算法服务完成编码。前端无需关心算法服务地址或编码细节。
 
-- `media_type = image` 时，结果卡使用 `<img>`
-- `media_type = video` 时，结果卡使用 `<video>` 或视频占位区
+### 10.3 联调推荐顺序
 
-当前实现中，视频结果详情弹窗使用真正的视频播放器。结果卡的小尺寸预览是否能显示首帧，还受到后端预览链路和视频编码格式影响。
+对于后端/算法同学，理解前端行为的推荐顺序：
 
-## 9.2 当前检索库卡片
-
-当前搜索页会展示“当前检索库”信息。主要来自 `GET /api/v1/stores/{store_id}`。
-
-当前前端会展示这些字段。
-
-- `store_name`
-- `store_description`
-- `store_type`
-- `scene`
-- `status`
-- `file_count`
-- `vector_count`
-
-注意，按当前产品要求，搜索页的“当前检索库”卡片不提供删除按钮，删除功能被单独放在“资源管理”页面中。
-
-## 9.3 任务详情弹窗
-
-当前任务详情页重点展示以下统计项。
-
-### 文件统计
-
-- 扫描文件数 `scanned_files`
-- 新增文件数 `new_files`
-- 跳过文件数 `skipped_files`
-- 当前有效文件数 `file_count`
-
-### 向量统计
-
-- 新增向量数 `new_vectors`
-- 跳过向量数 `skipped_vectors`
-- 当前向量总数 `vector_count`
-
-### 批次统计
-
-- 已处理批次 `processed_batches`
-- 总批次数 `total_batches`
-- 失败批次数 `failed_batches`
-
-### 其他信息
-
-- 库名称
-- 备注
-- 最终索引 ID
-- 失败原因
-
----
-
-## 10. 中文化与用户展示映射
-
-为了让非技术用户更易理解，前端当前已经把一部分后端或协议字段做了中文化展示。
-
-### 10.1 scene 展示映射
-
-- `Text2Video` -> `视频检索`
-- `Text2Image` -> `图像检索`
-- `Image2Image` -> `以图搜图`
-
-### 10.2 store_type 展示映射
-
-- `Folder` -> `文件夹`
-- `DataBase` -> `数据库`
-- `LongVideo` -> `长视频`
-
-### 10.3 task state 展示映射
-
-- `pending` -> `等待中`
-- `running` -> `执行中`
-- `success` -> `成功`
-- `failed` -> `失败`
-
-前端内部仍然保留原始字段值用于接口交互，但页面上尽量展示中文文本。
-
----
-
-## 11. 媒体预览链路说明
-
-这是当前联调中最需要后端和算法同学理解的部分。
-
-## 11.1 图片预览
-
-图片预览链路相对简单。
-
-- 以图搜图的查询图片通过 `/uploads/query-image` 上传
-- 检索结果图像通常可以直接通过 `preview_url` 或 `/media/preview?object_key=...` 预览
-- 浏览器对图片的解码与展示通常没有额外问题
-
-因此，图像检索和以图搜图当前一般都能正常显示。
-
-## 11.2 视频预览
-
-视频预览链路比图片复杂得多。
-
-当前前端已经支持：
-
-- 结果详情弹窗中使用 `<video controls>` 播放视频
-- 结果卡中尝试显示视频预览
-- 优先消费后端 `preview_url`
-- 没有 `preview_url` 时 fallback 到 `/api/v1/media/preview?object_key=...`
-
-但当前实践中已经确认，视频预览是否能正常显示，不只取决于前端。
-
-还取决于：
-
-- 后端 `/media/preview` 是否正确处理 Range 请求
-- 返回头是否适合内嵌播放，而不是附件下载
-- 视频编码是否浏览器兼容
-- 是否提供了更适合结果卡展示的 `poster_url` 或缩略图
-
-目前已排查到，视频预览问题的主要瓶颈在于**视频编码兼容性**，而不是图片或请求路径本身。
-
-因此，对后端和算法同学的建议是：
-
-- 尽量为前端提供浏览器兼容的预览视频
-- 优先提供封面图或缩略图，而不要让结果卡直接依赖原始视频流
-- 详情弹窗再播放视频本体或预览版视频
-
-## 11.3 当前前端对视频预览的结论
-
-- 当前前端已经把视频结果按视频组件处理，而不是图片组件
-- 当前前端已经支持通过 HTTP 预览接口拉取视频，而不是直接使用本机文件路径
-- 如果视频仍不能正常显示，优先排查视频编码与后端预览返回头
-
----
-
-## 12. 当前前端项目结构概览
-
-当前前端大致按如下方式组织。
-
-```text
-src/
-├── api/
-│   ├── client.ts
-│   ├── search.ts
-│   ├── prepare.ts
-│   └── stores.ts
-├── components/
-│   ├── common/
-│   ├── search/
-│   │   ├── SearchHeroInput.vue
-│   │   ├── ResultCard.vue
-│   │   ├── ResultDetailModal.vue
-│   │   └── ...
-│   ├── prepare/
-│   │   ├── VectorizeTaskForm.vue
-│   │   ├── TaskTable.vue
-│   │   ├── TaskDetailModal.vue
-│   │   └── ...
-│   └── resource/
-├── stores/
-│   ├── app.ts
-│   ├── search.ts
-│   ├── prepare.ts
-│   └── resource.ts
-├── utils/
-│   ├── mapper.ts
-│   ├── normalize.ts
-│   └── constants.ts
-├── views/
-│   ├── SearchPage.vue
-│   ├── PreparePage.vue
-│   └── ResourceManagePage.vue
-└── router/
 ```
-
-从后端或算法同学视角来看，只要知道：
-
-- `api/*` 决定接口调用格式
-- `stores/*` 决定页面状态组织
-- `components/search/*` 负责搜索结果相关展示
-- `components/prepare/*` 负责任务相关展示
-- `views/*` 负责把页面拼起来
-
----
-
-## 13. 当前实现中的关键前端服务能力
-
-从“前端提供了什么服务”这个角度来看，当前前端主要提供以下服务能力。
-
-### 13.1 检索任务编排能力
-
-虽然前端不做业务编排，但前端负责：
-
-- 根据用户当前模式组织正确的 `/search` 请求体
-- 在图搜图场景先上传查询图，再发起搜索
-- 在库未 ready 时展示 `preparing + job_id` 状态提示
-- 在搜索页展示当前检索库信息
-
-### 13.2 任务提交与跟踪能力
-
-前端负责：
-
-- 向后端提交向量化任务
-- 处理同名库冲突交互
-- 获取任务状态
-- 把复杂的任务结果统计转成可读页面
-
-### 13.3 资源管理能力
-
-前端负责：
-
-- 获取已有检索库列表
-- 展示库信息与统计字段
-- 删除检索库并反馈结果
-
-### 13.4 预览与详情展示能力
-
-前端负责：
-
-- 媒体预览
-- 结果详情弹窗
-- 前后条切换
-- 状态提示
-- 中文化展示
-
----
-
-## 14. 与后端联调时最关键的注意事项
-
-## 14.1 `/search` 不只是返回结果列表
-
-后端返回的 `meta` 对前端很重要，特别是：
-
-- `store_status`
-- `job_id`
-- `message`
-- `latency_ms`
-
-如果库未准备好且开启了自动准备，前端需要依赖这些字段告诉用户：当前处于 preparing 状态，并且提供进入任务页的线索。
-
-## 14.2 `/stores/{store_id}` 的详情字段不能省
-
-当前搜索页“当前检索库”卡片依赖详情接口中的以下字段。
-
-- `store_name`
-- `store_description`
-- `file_count`
-- `vector_count`
-
-如果这些字段缺失，页面的库信息展示会退化。
-
-## 14.3 `/tasks/{job_id}` 的 result 字段现在会被结构化展示
-
-当前前端不再直接原样打印 result JSON，而是会拆解里面的统计字段。后端新增字段越稳定，前端展示就越准确。
-
-## 14.4 删除库接口现在是一个真实业务动作
-
-当前前端已经支持资源管理页删除库，因此删除接口不再只是“可有可无”。
-
-它会影响：
-
-- 资源管理页
-- 搜索页当前检索库可选列表
-- 资源准备页可复用库逻辑
-
-## 14.5 查询图片上传接口是图搜图的前置条件
-
-如果 `/uploads/query-image` 不可用，则 `Image2Image` 搜索流程无法完成。
-
----
-
-## 15. 与算法侧联调时最关键的注意事项
-
-## 15.1 前端不直接传本地 query 图路径给算法
-
-图搜图时，前端不会把浏览器本地文件路径直接发给后端，更不会直接发给算法端。前端只会上传图片，后端返回 `object_key` 后再检索。
-
-算法同学不应假设前端会直接提供浏览器本地绝对路径。
-
-## 15.2 视频检索预览问题不等于搜索失败
-
-当前已知的一个常见误区是：
-
-- 搜索接口返回结果了
-- 排序分数也出来了
-- 但视频预览区黑屏或 0:00
-
-这不一定说明检索失败，更可能是视频预览资产或编码不适合浏览器播放。
-
-算法同学如果看到“结果对但视频预览不正常”，不应直接判断前端逻辑有误。
-
-## 15.3 向量化任务中的统计字段对算法评估很有价值
-
-当前前端已经开始把下面这些指标展示出来：
-
-- 扫描文件数
-- 新增向量数
-- 跳过向量数
-- 当前向量总数
-
-这对算法和后端判断增量向量化是否生效、版本复用是否正常都很重要。
-
----
-
-## 16. 已知限制与当前实现说明
-
-## 16.1 Windows 本机绝对路径
-
-当前前端支持输入资源路径，也尽量支持通过本地桥接能力获取本机绝对路径。但在纯浏览器环境下，浏览器通常不能直接暴露真实 Windows 绝对路径。
-
-因此：
-
-- 如果运行在普通浏览器中，资源准备页可能仍需要用户手工补充绝对路径
-- 如果未来接入 Electron、Tauri 或本地桥接层，则可以进一步优化路径选择体验
-
-## 16.2 视频结果卡预览不稳定
-
-当前已经确认，视频结果卡的小尺寸预览会受以下因素影响：
-
-- 视频编码
-- 后端预览流处理
-- 是否提供封面图
-
-因此结果卡对视频的展示天然不如图片稳定。
-
-## 16.3 当前前端不会在搜索页直接删除库
-
-这是刻意设计。删除库操作被移动到了资源管理页，避免用户在搜索主流程中误删。
-
----
-
-## 17. 推荐联调顺序
-
-对于后端或算法同学，如果要理解当前前端行为，建议按下面顺序联调。
-
-1. 先确认 `GET /api/v1/health` 正常
-2. 再确认 `GET /api/v1/stores` 与 `GET /api/v1/stores/{store_id}` 返回完整字段
-3. 再确认 `POST /api/v1/vectorize` 能接受当前前端提交的字段
-4. 再确认 `GET /api/v1/tasks/{job_id}` 返回结构化统计字段
-5. 再确认 `POST /api/v1/uploads/query-image` 能正常上传并返回 `object_key`
-6. 最后确认 `POST /api/v1/search` 与 `/api/v1/media/preview` 链路
-
----
-
-## 18. 当前前端实现总结
-
-当前版本前端已经形成了较完整的三块能力。
-
-### 检索能力
-
-- 三种模式的统一搜索入口
-- 图搜图上传后搜索
-- 当前检索库信息展示
-- 结果列表与详情弹窗
-
-### 资源准备能力
-
-- 自定义库名称与备注
-- 向量化任务提交
-- 同名冲突确认
-- 结构化任务详情展示
-
-### 资源管理能力
-
-- 检索库列表
-- 统计字段展示
-- 删除库操作
-
-从后端和算法同学视角，最重要的理解是：
-
-- 前端现在已经不只是“做个页面”
-- 它已经把搜索、准备、管理三条主线串起来了
-- 因此前端对后端字段稳定性、返回格式一致性、预览链路可用性有更强依赖
-
-只要后端维持接口稳定、算法端维持编码与预览资产链路可用，当前前端可以较稳定地完成检索与管理工作。
+1. GET  /api/v1/health              → 确认后端可达
+2. GET  /api/v1/stores              → 确认检索库列表接口返回完整字段
+3. GET  /api/v1/stores/{store_id}   → 确认详情字段（file_count、vector_count 等）
+4. POST /api/v1/uploads/query-image → 确认图片上传返回 object_key 和 preview_url
+5. POST /api/v1/vectorize           → 确认建库任务可正常启动
+6. GET  /api/v1/tasks/{job_id}      → 确认任务状态字段结构完整
+7. POST /api/v1/search              → 确认检索返回 preview_url 可用
+8. GET  /api/v1/media/preview       → 确认图片/视频能正常预览
+```

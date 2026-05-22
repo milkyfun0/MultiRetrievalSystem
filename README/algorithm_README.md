@@ -1,546 +1,368 @@
-# 多模态检索系统算法端技术说明文档
+# 算法服务组件文档
 
-## 1. 项目目标
-
-本项目将三类检索模型封装为统一的 HTTP 编码服务，供后端直接调用。
-
-支持的任务如下。
-
-- `i2i`，图搜图编码
-- `t2i`，文搜图编码
-- `t2v`，文搜视频编码
-
-系统目标不是直接做检索排序，而是对输入进行向量化。后端拿到向量后，可以继续执行 FAISS 检索、缓存、入库、索引构建、召回、重排等后续流程。
-
-这与方案文档中的系统分层一致。整体上由后端 FastAPI、算法 Python 编码服务、FAISS、MinIO、MLflow、Celery 等组件构成，算法侧职责是对 Query 和 Keys 做向量化，并在批量输入时支持分批处理。fileciteturn2file0 fileciteturn2file1
+本文档面向初次接触本系统的开发人员，完整说明算法服务的架构设计、启动方式、接口规范、常见问题及与其他组件的集成方式。
 
 ---
 
-## 2. 当前服务结构
+## 1. 组件概述
 
-当前实现采用四个服务进程。
+算法服务是多模态检索系统的向量化核心。它**不负责检索排序**，只负责一件事：把输入的图像路径、文本、视频路径编码成向量（embedding），供后端的 FAISS 索引层使用。
 
-- `gateway`，统一入口，端口 `18080`
-- `i2i worker`，图像编码，端口 `18081`
-- `t2i worker`，文本和图像编码，端口 `18082`
-- `t2v worker`，文本和视频编码，端口 `18083`
+### 支持的任务类型
 
-调用路径如下。
+| 内部场景名 | 功能 | 对应业务场景 |
+|---|---|---|
+| `i2i` | 图像 → 向量 | 以图搜图（Image2Image） |
+| `t2i` | 文本/图像 → 向量 | 文搜图（Text2Image） |
+| `t2v` | 文本/视频 → 向量 | 文搜视频（Text2Video） |
 
-1. 调用方请求 `gateway /encode`
-2. gateway 根据 `scene` 或 `scence` 路由到对应 worker
-3. worker 将输入归一化后调用底层 `encode(...)`
-4. worker 返回 embedding，gateway 原样转发
+### 服务架构
 
-health 检查也通过 gateway 聚合完成。
+算法服务由 4 个进程组成，Gateway 作为统一入口向后端暴露，各 Worker 处理具体编码：
 
----
+```
+后端 FastAPI (8000)
+       │
+       ▼
+  Gateway (:18080)          ← 统一入口，负责路由和健康聚合
+  ├─ I2I Worker (:18081)    ← 图像编码（base_distill 模型）
+  ├─ T2I Worker (:18082)    ← 文本+图像编码（CXR-CLIP 医学模型）
+  └─ T2V Worker (:18083)    ← 文本+视频编码（CLIP-VIP 模型）
+```
 
-## 3. 设计原则
+### 目录结构
 
-### 3.1 编码器原则
-
-本服务是编码器，不是检索器。
-
-它只负责一件事，有有效输入就编码，无有效输入就返回空。
-
-统一原则如下。
-
-- `query` 有值，就编码 `query`
-- `key` 有值，就编码 `key`
-- `query` 为空，不报错，返回 `query_embed = []`
-- `key` 为空，不报错，返回 `key_embed = []`
-- `query` 和 `key` 都为空，也不报错，直接返回空结果
-
-### 3.2 批量原则
-
-`query` 和 `key` 都支持单值和列表。
-
-也就是都支持下面两种形式。
-
-- 单值，例如 `"query": "text"`
-- 批量，例如 `"query": ["text1", "text2"]`
-
-服务层会统一归一化成列表，再交给底层模型编码。
-
-### 3.3 空值过滤原则
-
-以下输入会被视为空并自动过滤。
-
-- `None`
-- `""`
-- 纯空白字符串
-- `[]`
-- `[
-  "",
-  None
-]` 这类过滤后为空的列表
-
-### 3.4 返回格式原则
-
-为了兼容批量调用，返回统一采用批量形式。
-
-即使只有一个 query，也返回二维列表。
-
-例如。
-
-```json
-{
-  "scene": "i2i",
-  "query_embed": [[0.1, 0.2, 0.3]],
-  "key_embed": [[0.4, 0.5, 0.6]]
-}
+```
+algorithm/
+├── gateway/
+│   └── app.py              # 统一网关，路由 /encode 到各 worker
+├── common/
+│   └── api_utils.py        # 共享工具：归一化、设备检测、ModelGuard 等
+├── ImageRetrieval/
+│   ├── serve_i2i.py        # I2I HTTP 服务（端口 18081）
+│   └── i2i_encode.py       # 底层图像编码逻辑
+├── MedicalRetrieval/
+│   ├── serve_t2i.py        # T2I HTTP 服务（端口 18082）
+│   └── t2i_encode.py       # 底层文本+图像编码逻辑（Hydra 配置）
+├── VideoRetrieval/
+│   ├── serve_t2v.py        # T2V HTTP 服务（端口 18083）
+│   └── t2v_encode.py       # 底层文本+视频编码逻辑（CLIP-VIP）
+└── launcher/
+    └── run_all.py          # 一键启动所有 4 个服务进程
 ```
 
 ---
 
-## 4. 目录说明
+## 2. 快速上手
 
-推荐项目目录如下。
+### 2.1 前提条件
 
-```text
-RetrievalSys/
-├─ launcher/
-│  └─ run_all.py
-├─ gateway/
-│  └─ app.py
-├─ common/
-│  └─ api_utils.py
-├─ ImageRetrieval/
-│  ├─ i2i_encode.py
-│  └─ serve_i2i.py
-├─ MedicalRetrieval/
-│  ├─ t2i_encode.py
-│  └─ serve_t2i.py
-├─ VideoRetrieval/
-│  ├─ t2v_encode.py
-│  └─ serve_t2v.py
-└─ tests/
-   └─ test_data/
-```
+- Python ≥ 3.9
+- PyTorch（推荐 CUDA 版本，CPU 亦可运行但速度较慢）
+- 项目根目录已安装 `requirements.txt` 依赖
 
-三个原始模型入口文件分别是。
+### 2.2 配置模型权重
 
-- `ImageRetrieval/i2i_encode.py`
-- `MedicalRetrieval/t2i_encode.py`
-- `VideoRetrieval/t2v_encode.py`
-
-并且都要求在各自目录下运行，这一点与最初需求一致。fileciteturn2file2 fileciteturn2file3 fileciteturn2file4
-
----
-
-## 5. 启动方式
-
-### 5.1 checkpoint 配置
-
-当前 `launcher/run_all.py` 采用常量配置模型权重路径，而不是环境变量。
-
-典型形式如下。
+打开 `launcher/run_all.py`，填写各模型的 checkpoint 路径：
 
 ```python
-I2I_CKPT_PATH = ""
-T2I_CKPT_PATH = ""
-T2V_CKPT_PATH = ""
+# 路径相对于各自 worker 的工作目录
+# I2I 权重路径相对于 algorithm/ImageRetrieval/
+I2I_CKPT_PATH = "analyze_valid/base_distill_patchmask/.../xxx.pt"
+
+# T2I 权重路径相对于 algorithm/MedicalRetrieval/
+T2I_CKPT_PATH = "Ksample4Ratio0.32025-01-29/21-09-16/checkpoints/model-best.tar"
+
+# T2V 权重路径相对于 algorithm/VideoRetrieval/
+T2V_CKPT_PATH = "ckpts/model_step_10547.pt"
 ```
 
-说明如下。
+> 留空字符串 `""` 表示不加载权重，仅初始化模型结构（向量没有业务意义，仅用于功能联调）。
 
-- 空字符串表示不加载 checkpoint，只初始化模型结构
-- 填入真实路径表示启动时加载权重
-
-### 5.2 启动命令
-
-在项目根目录执行。
+### 2.3 启动服务
 
 ```bash
+# 在 algorithm/ 目录下执行
+cd algorithm
 python launcher/run_all.py
 ```
 
-正常启动后，会看到四个端口启动。
+启动成功后，终端会依次打印 4 个服务的启动日志，全部就绪后显示：
 
-- `18080`，gateway
-- `18081`，i2i
-- `18082`，t2i
-- `18083`，t2v
+```
+[launch] all services started. Press Ctrl+C to stop.
+```
 
-### 5.3 健康检查
-
-#### 检查统一入口
+### 2.4 验证启动状态
 
 ```bash
+# 检查 Gateway（聚合所有 worker 状态）
 curl http://127.0.0.1:18080/health
+
+# 单独检查各 worker
+curl http://127.0.0.1:18081/health   # I2I
+curl http://127.0.0.1:18082/health   # T2I
+curl http://127.0.0.1:18083/health   # T2V
 ```
 
-#### 检查单个 worker
-
-```bash
-curl http://127.0.0.1:18081/health
-curl http://127.0.0.1:18082/health
-curl http://127.0.0.1:18083/health
-```
-
-正常返回示例。
+Gateway 健康检查返回示例：
 
 ```json
-{"ok": true, "worker": "i2i"}
+{
+  "gateway": "ok",
+  "workers": {
+    "i2i": { "loaded": true, "detail": { "ok": true, "worker": "i2i" } },
+    "t2i": { "loaded": true, "detail": { "ok": true, "worker": "t2i" } },
+    "t2v": { "loaded": true, "detail": { "ok": true, "worker": "t2v" } }
+  }
+}
 ```
 
 ---
 
-## 6. 接口说明
+## 3. 配置说明
 
-统一入口。
+### 3.1 端口配置
 
-- `POST /encode`
+在 `launcher/run_all.py` 中统一管理：
 
-健康检查。
+```python
+GATEWAY_HOST = "0.0.0.0"
+GATEWAY_PORT = 18080
 
-- `GET /health`
-
-### 6.1 输入字段
-
-`POST /encode` 请求体支持以下字段。
-
-| 字段 | 类型 | 说明 |
-|---|---|---|
-| scene | str | 推荐使用，任务类型，`i2i`、`t2i`、`t2v` |
-| scence | str | 兼容旧拼写 |
-| query | str 或 list | query 输入，可为空 |
-| key | str 或 list | key 输入，可为空 |
-| params | dict | 预留参数，目前可为空 |
-
-### 6.2 返回字段
-
-#### i2i
-
-```json
-{
-  "scene": "i2i",
-  "query_embed": [[...], [...]],
-  "key_embed": [[...], [...]]
-}
+I2I_HOST = "0.0.0.0";  I2I_PORT = 18081
+T2I_HOST = "0.0.0.0";  T2I_PORT = 18082
+T2V_HOST = "0.0.0.0";  T2V_PORT = 18083
 ```
 
-#### t2i
+### 3.2 模型权重传递机制
 
-```json
-{
-  "scene": "t2i",
-  "query": ["text1", "text2"],
-  "query_embed": [[...], [...]],
-  "key_embed": [[...], [...]]
-}
+launcher 通过环境变量 `MODEL_CKPT_PATH` 把路径传递给子进程，各 worker 在 `startup()` 事件中读取：
+
+```python
+# 各 worker 的 startup 函数
+@app.on_event("startup")
+def startup():
+    ckpt_path = os.getenv("MODEL_CKPT_PATH", "").strip()
+    # 加载模型...
 ```
 
-#### t2v
+### 3.3 PYTHONPATH 配置
 
-```json
-{
-  "scene": "t2v",
-  "query": ["text1", "text2"],
-  "query_embed": [[...], [...]],
-  "key_embed": [[...], [...]]
-}
-```
-
-说明如下。
-
-- 没有有效输入的那一侧，返回 `[]`
-- 有输入的一侧，返回批量向量列表
+launcher 启动时会自动把项目根目录（`algorithm/` 的上一级）加入 `PYTHONPATH`，使各 worker 能正确 `import common.api_utils`。**不需要手动设置。**
 
 ---
 
-## 7. 使用示例
+## 4. 接口说明
 
-### 7.1 Python 单条调用示例
+### 4.1 统一编码接口
 
-#### i2i
+所有请求通过 Gateway 的 `/encode` 接口转发：
+
+```
+POST http://127.0.0.1:18080/encode
+Content-Type: application/json
+```
+
+**请求字段：**
+
+| 字段 | 类型 | 是否必填 | 说明 |
+|---|---|---|---|
+| `scene` | string | 是 | `i2i`、`t2i`、`t2v`（支持旧拼写 `scence`） |
+| `query` | string / list / null | 否 | 查询侧输入（文本或路径） |
+| `key` | string / list / null | 否 | 库侧输入（文件路径列表） |
+| `params` | dict | 否 | 预留扩展参数 |
+
+**输入空值处理规则：**
+- `null`、`""`、纯空白字符串、`[]` 均视为空
+- 列表中混入的 `null` 和空串会被自动过滤
+- 空输入不报错，对应的 `query_embed` / `key_embed` 返回 `[]`
+
+**响应字段：**
+
+| 场景 | 响应示例 |
+|---|---|
+| `i2i` | `{ "scene": "i2i", "query_embed": [[...]], "key_embed": [[...]] }` |
+| `t2i` | `{ "scene": "t2i", "query": ["text..."], "query_embed": [[...]], "key_embed": [[...]] }` |
+| `t2v` | `{ "scene": "t2v", "query": ["text..."], "query_embed": [[...]], "key_embed": [[...]] }` |
+
+所有向量统一返回**二维列表**（即使只有一个输入，也返回 `[[...]]`）。
+
+### 4.2 健康检查接口
+
+```
+GET http://127.0.0.1:18080/health       # Gateway 聚合检查
+GET http://127.0.0.1:18081/health       # I2I worker
+GET http://127.0.0.1:18082/health       # T2I worker
+GET http://127.0.0.1:18083/health       # T2V worker
+```
+
+---
+
+## 5. 使用示例
+
+### 5.1 I2I：图像编码
 
 ```python
 import requests
-import json
 
 url = "http://127.0.0.1:18080/encode"
 
-payload = {
+# 单张图像查询，多张图像作为库
+resp = requests.post(url, json={
     "scene": "i2i",
-    "query": r"F:\\Code\\RetrievalSys\\tests\\test_data\\ImageRetrieval\\airplane_001.jpg",
+    "query": "/data/images/query_airplane.jpg",
     "key": [
-        r"F:\\Code\\RetrievalSys\\tests\\test_data\\ImageRetrieval\\airplane_002.jpg",
-        r"F:\\Code\\RetrievalSys\\tests\\test_data\\ImageRetrieval\\airplane_003.jpg"
+        "/data/images/airplane_001.jpg",
+        "/data/images/airplane_002.jpg",
+        "/data/images/airplane_003.jpg",
     ]
-}
+}, timeout=300)
 
-resp = requests.post(url, json=payload, timeout=300)
-print(resp.status_code)
-print(json.dumps(resp.json(), ensure_ascii=False, indent=2)[:1000])
+result = resp.json()
+print(f"query 向量维度: {len(result['query_embed'][0])}")
+print(f"key 向量数量: {len(result['key_embed'])}")
 ```
 
-#### t2i
+### 5.2 T2I：文搜图编码
 
 ```python
 import requests
-import json
 
 url = "http://127.0.0.1:18080/encode"
 
-payload = {
+resp = requests.post(url, json={
     "scene": "t2i",
-    "query": "Spindle cell variant of embryonal rhabdomyosarcoma is characterized by fascicles of eosinophilic spindle cells.",
+    "query": "Spindle cell variant of embryonal rhabdomyosarcoma",
     "key": [
-        r"F:\\Code\\RetrievalSys\\tests\\test_data\\MedicalRetrieval\\2a2277a9-b0ded155-c0de8eb9-c124d10e-82c5caab.jpg",
-        r"F:\\Code\\RetrievalSys\\tests\\test_data\\MedicalRetrieval\\68b5c4b1-227d0485-9cc38c3f-7b84ab51-4b472714.jpg"
+        "/data/medical/image_001.jpg",
+        "/data/medical/image_002.jpg",
     ]
-}
+}, timeout=300)
 
-resp = requests.post(url, json=payload, timeout=300)
-print(resp.status_code)
-print(json.dumps(resp.json(), ensure_ascii=False, indent=2)[:1000])
+result = resp.json()
+print(f"文本 query 向量: {result['query_embed']}")
+print(f"图像 key 向量数量: {len(result['key_embed'])}")
 ```
 
-#### t2v
+### 5.3 T2V：文搜视频编码
 
 ```python
 import requests
-import json
 
 url = "http://127.0.0.1:18080/encode"
 
-payload = {
+resp = requests.post(url, json={
     "scene": "t2v",
     "query": "a band performing in a small club",
     "key": [
-        r"F:\\Code\\RetrievalSys\\tests\\test_data\\VideoRetrieval\\video0.mp4",
-        r"F:\\Code\\RetrievalSys\\tests\\test_data\\VideoRetrieval\\video1.mp4"
+        "/data/videos/video_001.mp4",
+        "/data/videos/video_002.mp4",
     ]
-}
+}, timeout=1200)  # 视频编码耗时较长，建议延长 timeout
 
-resp = requests.post(url, json=payload, timeout=300)
-print(resp.status_code)
-print(json.dumps(resp.json(), ensure_ascii=False, indent=2)[:1000])
+result = resp.json()
+print(f"文本向量数: {len(result['query_embed'])}")
+print(f"视频向量数: {len(result['key_embed'])}")
 ```
 
-### 7.2 Python 批量 query 示例
-
-#### t2i 批量 query
+### 5.4 批量 query
 
 ```python
-payload = {
+# 所有场景均支持 query 为列表
+resp = requests.post(url, json={
     "scene": "t2i",
-    "query": [
-        "Spindle cell variant of embryonal rhabdomyosarcoma is characterized by fascicles of eosinophilic spindle cells.",
-        "cell variant of embryonal rhabdomyosarcoma is characterized by fas"
-    ],
-    "key": [
-        r"F:\\Code\\RetrievalSys\\tests\\test_data\\MedicalRetrieval\\2a2277a9-b0ded155-c0de8eb9-c124d10e-82c5caab.jpg"
-    ]
-}
+    "query": ["text query 1", "text query 2", "text query 3"],
+    "key": ["/data/images/image_001.jpg"]
+}, timeout=300)
 ```
 
-#### i2i 批量 query
+### 5.5 空输入（仅编码单侧）
 
 ```python
-payload = {
+# 只编码 key，不编码 query（常用于建库阶段）
+resp = requests.post(url, json={
     "scene": "i2i",
-    "query": [
-        r"F:\\Code\\RetrievalSys\\tests\\test_data\\ImageRetrieval\\airplane_001.jpg",
-        r"F:\\Code\\RetrievalSys\\tests\\test_data\\ImageRetrieval\\airplane_002.jpg"
-    ],
-    "key": []
-}
-```
+    "query": None,
+    "key": ["/data/images/airplane_001.jpg"]
+}, timeout=300)
 
-### 7.3 空输入示例
-
-#### query 为空，key 有值
-
-```python
-payload = {
-    "scene": "i2i",
-    "query": "",
-    "key": [
-        r"F:\\Code\\RetrievalSys\\tests\\test_data\\ImageRetrieval\\airplane_001.jpg"
-    ]
-}
-```
-
-返回预期。
-
-```json
-{
-  "scene": "i2i",
-  "query_embed": [],
-  "key_embed": [[...]]
-}
-```
-
-#### query 和 key 都为空
-
-```python
-payload = {
-    "scene": "t2v",
-    "query": "",
-    "key": []
-}
-```
-
-返回预期。
-
-```json
-{
-  "scene": "t2v",
-  "query": [],
-  "query_embed": [],
-  "key_embed": []
-}
+# 返回 query_embed 为空列表
+# { "scene": "i2i", "query_embed": [], "key_embed": [[...]] }
 ```
 
 ---
 
-## 8. 开发说明
+## 6. 开发说明
 
-### 8.1 三个底层 encode 的职责
+### 6.1 各 worker 编码职责
 
-#### i2i
+#### I2I Worker（`serve_i2i.py`）
 
-输入图像路径列表，输出图像 embedding。
+- 接收图像路径列表，调用 `i2i_encode.encode(opt, model, image_paths)`
+- 底层使用 base_distill 蒸馏模型（TinyCLIP）
+- 空路径列表时直接返回 `[]`，不调用模型
 
-要求。
+#### T2I Worker（`serve_t2i.py`）
 
-- 输入为空时返回 `[]`
-- 输入非空时返回 `Tensor`
-- service 层会将 Tensor 转成 Python 列表
+- 分别接收文本列表和图像路径列表，独立编码
+- 底层使用 CXR-CLIP 医学图像模型，通过 Hydra 管理配置
+- 启动时通过 `_compose_task_cfg()` + `HydraConfig.instance().set_config()` 正确初始化配置
 
-#### t2i
+#### T2V Worker（`serve_t2v.py`）
 
-输入文本列表和图像路径列表，分别独立编码。
+- 分别接收文本列表和视频路径列表，独立编码
+- 底层使用 CLIP-VIP 视频理解模型
+- 需确保文本张量和视频张量都在同一设备（`text.to(device)` + `video.to(device)`）
 
-要求。
+### 6.2 公共工具（`common/api_utils.py`）
 
-- 只对有值的一侧建 dataloader
-- 文本侧为空时返回 `[]`
-- 图像侧为空时返回 `[]`
-
-#### t2v
-
-输入文本列表和视频路径列表，分别独立编码。
-
-要求。
-
-- 只对有值的一侧建 dataloader
-- 文本张量和视频张量都要放到 model 所在 device
-- 文本侧为空时返回 `[]`
-- 视频侧为空时返回 `[]`
-
-### 8.2 service 层职责
-
-worker 层负责。
-
-- 接收 HTTP 请求
-- 归一化 query 和 key
-- 过滤空字符串和空值
-- 调用底层 encode
-- 将 Tensor 转成 JSON 可序列化的列表
-
-### 8.3 gateway 层职责
-
-gateway 负责。
-
-- 统一入口
-- 根据 `scene` 路由到不同 worker
-- 聚合健康检查
-- 代理下游错误信息
+| 工具 | 说明 |
+|---|---|
+| `normalize_to_str_list(value)` | 将单值/列表归一化为 `List[str]`，自动过滤空值 |
+| `normalize_request(payload)` | 提取并规范化 `scene/query/key/params` 字段 |
+| `tensor_to_list(x)` | 将 Tensor 转换为 Python 列表（JSON 可序列化） |
+| `isolated_argv(argv0)` | 上下文管理器，临时清空 `sys.argv` 防止 argparse 冲突 |
+| `pushd(path)` | 上下文管理器，临时切换工作目录 |
+| `ModelGuard` | 基于 `threading.Lock` 的模型推理互斥锁 |
 
 ---
 
-## 9. 回归测试建议
+## 7. 常见问题解答
 
-推荐使用统一测试脚本，一次性覆盖以下情况。
+### Q1：Gateway 健康检查某个 worker 报 502，但单独访问该 worker 是 200
 
-- 正常单条 query 和多 key
-- query 为空，key 有值
-- query 为 list，key 为空
-- query 和 key 都为空
-- query 为 `None`，key 为 `None`
-- `scence` 旧拼写兼容
-- 列表中混入空字符串和 `None`
+**原因**：Windows 或企业网络环境下，Python HTTP 客户端读取了系统代理配置，导致访问 `127.0.0.1` 也走代理。
 
-你最近一次测试中，19 个 case 通过了 16 个，失败的 3 个全部是 `invalid_blank_items_filtered`，原因是请求模型过早将 `None` 拦截成 422，还没有进入过滤逻辑。fileciteturn3file0
+**解决**：`gateway/app.py` 中已配置 `httpx.Client(trust_env=False)`，如仍出现问题请确认 `gateway/app.py` 中的 `build_client()` 未被修改。
 
-因此开发侧需要确保 `EncodeRequest` 中 `query` 和 `key` 的类型足够宽松，例如使用 `Union[str, List[Any]]` 或 `Any`，然后统一交给 `normalize_to_str_list()` 过滤。fileciteturn3file0
+### Q2：I2I 启动时报 `unrecognized arguments`
 
----
+**原因**：uvicorn 启动参数残留在 `sys.argv`，被底层 `argparse` 误读。
 
-## 10. 常见故障排查
+**解决**：已在 `serve_i2i.py` 的 `get_model_adapter()` 中通过 `isolated_argv()` 处理。如遇到相关问题，请确认 `common/api_utils.py` 中该工具函数存在且被正确调用。
 
-### 10.1 gateway 健康检查报 502，但单独访问 worker 是 200
+### Q3：T2I 启动时报 `HydraConfig was not set`
 
-现象。
+**原因**：Hydra 配置未正确注入。
 
-- `curl http://127.0.0.1:18081/health` 返回 200
-- `curl http://127.0.0.1:18080/health` 中某个 worker 显示 502
-
-原因。
-
-在 Windows 或企业网络环境下，Python HTTP 客户端可能读取了系统代理环境变量，导致访问 `127.0.0.1` 也走代理。
-
-处理方式。
-
-在 `gateway/app.py` 中使用。
+**解决**：`serve_t2i.py` 中的 `_compose_task_cfg()` 已通过以下方式解决：
 
 ```python
-httpx.Client(..., trust_env=False)
+with initialize_config_dir(version_base=None, config_dir=str(config_dir)):
+    cfg = compose(config_name="train", return_hydra_config=True)
+HydraConfig.instance().set_config(cfg)
+# 移除 hydra 子树
+with open_dict(cfg):
+    if "hydra" in cfg:
+        del cfg["hydra"]
 ```
 
-这是本次联调里已经确认过的真实问题。fileciteturn3file0
+### Q4：T2V 推理时报 `Expected all tensors to be on the same device`
 
-### 10.2 i2i 启动时报 argparse unrecognized arguments
+**原因**：文本张量或视频张量未移动到模型所在设备。
 
-现象。
-
-```text
-error: unrecognized arguments: serve_i2i:app --host 0.0.0.0 --port 18081
-```
-
-原因。
-
-`uvicorn` 启动参数残留在 `sys.argv` 中，被原始算法代码里的 `argparse` 读到了。
-
-处理方式。
-
-在调用原始配置读取逻辑之前，用 `isolated_argv()` 暂时清空 `sys.argv`。
-
-### 10.3 t2i 启动时报 HydraConfig was not set
-
-现象。
-
-`MedicalRetrieval` 启动时报 Hydra 配置相关错误。
-
-原因。
-
-直接在服务进程里调用 Hydra 入口函数，或只做 `compose` 但没有注入 HydraConfig。
-
-处理方式。
-
-- 使用 `initialize_config_dir + compose`
-- 调用 `HydraConfig.instance().set_config(cfg)`
-- 视情况移除 `cfg["hydra"]`
-
-### 10.4 t2v 推理时报 Expected all tensors to be on the same device
-
-现象。
-
-```text
-Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu
-```
-
-原因。
-
-`t2v_encode.py` 中的 `text_input_ids`、`text_input_mask`、`video` 没有全部移动到 model 所在 device。
-
-处理方式。
-
-在 `encode()` 中统一做。
+**解决**：在 `t2v_encode.py` 的 `encode()` 函数中确保：
 
 ```python
 text_input_ids = text_input_ids.to(device)
@@ -548,99 +370,74 @@ text_input_mask = text_input_mask.to(device)
 video = video.to(device)
 ```
 
-### 10.5 空 key 时 torch.cat 报错
+### Q5：输入列表中含有 `null` 时返回 422
 
-现象。
+**原因**：Pydantic 请求模型对 `query`/`key` 类型定义过严，`null` 在请求解析阶段被拒绝。
 
-```text
-torch.cat(): expected a non-empty list of Tensors
-```
-
-原因。
-
-某一侧输入为空，但底层 `encode()` 仍然在对空列表做 `torch.cat([])`。
-
-处理方式。
-
-底层 `encode()` 改成。
-
-- 输入为空时直接返回 `[]`
-- 只有收集到有效 feature 后再 `torch.cat`
-
-### 10.6 列表中带 None 时返回 422
-
-现象。
-
-例如。
-
-```json
-{
-  "scene": "t2v",
-  "query": ["", "   ", "a band performing in a small club"],
-  "key": ["", null, "video0.mp4"]
-}
-```
-
-直接返回 422，而不是被过滤后继续执行。
-
-原因。
-
-Pydantic 请求模型把 `key` 定义成了 `List[str]`，导致列表里的 `None` 在请求解析阶段就失败。
-
-处理方式。
-
-把请求模型改宽松，例如。
+**解决**：各 worker 的 `EncodeRequest` 已定义为：
 
 ```python
-query: Optional[Union[str, List[Any]]] = None
-key: Optional[Union[str, List[Any]]] = None
+query: Optional[Union[str, List[str]]] = None
+key: Optional[Union[str, List[str]]] = None
 ```
 
-然后统一交给 `normalize_to_str_list()` 过滤。这个问题在本次测试日志中已经明确出现。fileciteturn3file0
+如仍出现 422，请检查 Pydantic 版本是否与 `Optional[Union[...]]` 兼容，或改用 `Optional[Any]`。
 
-### 10.7 空 checkpoint 启动后向量数值异常
+### Q6：服务启动成功但向量数值无意义
 
-现象。
+**原因**：`checkpoint` 路径为空，模型仅初始化结构但未加载训练权重。
 
-服务能启动，但 embedding 没有业务意义。
+**解决**：填写 `launcher/run_all.py` 中的正确 checkpoint 路径，重启服务。
 
-原因。
+### Q7：worker 报告文件找不到，但本地路径存在
 
-checkpoint 为空时，仅初始化了模型结构，未加载训练权重。
+**原因**：算法服务直接从本地文件系统读取路径。如果后端（或前端）传入的路径是相对路径或对方机器的路径，在算法服务所在机器上无法访问。
 
-处理方式。
-
-确认 `launcher/run_all.py` 中三个 checkpoint 常量是否已正确填写。
-
-### 10.8 本地路径存在，但 worker 报文件找不到
-
-原因。
-
-当前三类底层脚本都直接从本地文件系统读取图像或视频路径。因此调用方传入的路径，必须是算法服务所在机器可直接访问的绝对路径或有效相对路径。fileciteturn2file2 fileciteturn2file3 fileciteturn2file4
-
-如果后端只持有 MinIO object key 或数据库记录，需在调用编码器前先完成路径映射或下载到本地。
+**解决**：后端调用算法服务前，必须确保路径已映射/下载到算法服务可访问的本地绝对路径。
 
 ---
 
-## 11. 开发建议
+## 8. 与其他组件的集成
 
-1. 固定接口语义，不要在 worker 中写“query 必填”这类业务校验
-2. worker 只负责编码，业务规则由后端决定
-3. 所有输入统一先做归一化，再做编码
-4. 所有输出统一返回批量列表，避免单条和批量格式不一致
-5. 修改底层模型逻辑后，务必跑一遍统一回归测试
+### 8.1 后端如何调用算法服务
 
----
+后端通过 `HttpAlgorithmService.encode()` 调用 Gateway，**所有路由、场景映射、错误处理均由后端承担**：
 
-## 12. 交付建议
+```
+后端 (algorithm_service.py)
+  → 将业务 scene（Text2Video）映射为算法 scene（t2v）
+  → POST http://127.0.0.1:18080/encode
+  → t2v 编码 timeout 为 1200s，其他为 300s
+```
 
-如果后续需要正式交付给后端团队，建议同时交付以下内容。
+### 8.2 算法服务的职责边界
 
-- 本 README
-- `launcher/run_all.py`
-- 四个 HTTP 服务文件
-- 三个底层 `encode` 文件
-- 一份统一测试脚本
-- 一份端口说明和 checkpoint 配置说明
-- 一份问题排查清单
+算法服务**只负责**：
+- 接收 `query` / `key`
+- 编码并返回向量
 
+算法服务**不负责**：
+- 检索库管理
+- 任务状态跟踪
+- 预览 URL 构造
+- 向量索引管理
+- 前端展示字段
+
+这些业务逻辑全部由后端承担。
+
+### 8.3 调试建议
+
+联调时推荐按以下顺序验证：
+
+```bash
+# 第 1 步：确认算法服务全部健康
+curl http://127.0.0.1:18080/health
+
+# 第 2 步：用固定测试文件验证各 worker
+curl -X POST http://127.0.0.1:18080/encode \
+  -H "Content-Type: application/json" \
+  -d '{"scene":"i2i","query":"/absolute/path/to/test.jpg","key":[]}'
+
+# 第 3 步：确认后端的 MMR_ALGORITHM_MODE=http 且 MMR_ALGORITHM_GATEWAY_URL 正确
+curl http://127.0.0.1:8000/api/v1/health
+```
