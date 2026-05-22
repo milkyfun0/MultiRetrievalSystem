@@ -153,7 +153,7 @@ def inference_dataloader(dataloader_config, transform_config, tokenizer, text, i
 
 
 def load_model_weights(model, ckpt_path: str):
-    ckpt = torch.load(ckpt_path, map_location="cpu")
+    ckpt = torch.load(ckpt_path, map_location="cpu", weights_only=False)
 
     if "model" not in ckpt:
         raise KeyError(f"'model' not found in checkpoint, available keys: {list(ckpt.keys())}")
