@@ -93,7 +93,8 @@ npm run build   # 产出 frontend/dist/
    sudo nginx -s reload -c /Users/caoqixuan.1/code/MultiRetrievalSystem/deploy/nginx/mmr.conf
 
    # Windows（在 nginx 解压目录里执行）
-   nginx.exe -c D:\code\MultiRetrievalSystem\deploy\nginx\mmr.conf
+   cd deploy/nginx
+   .\nginx.exe -c conf/nginx.conf 
    ```
 
    > ⚠️ `-c` 必须传**绝对路径**，相对路径 nginx 会按它自己的 prefix 解析，容易出错。
