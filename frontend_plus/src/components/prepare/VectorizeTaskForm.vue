@@ -273,7 +273,7 @@ const selectedIntervalIndex = computed(() => {
 const resourcePlaceholder = computed(() => {
   if (props.form.storeType === 'DataBase') return '请输入数据库资源标识或库 ID'
   if (props.form.storeType === 'LongVideo') return '请输入单个长视频文件的绝对路径，例如 F:\\videos\\meeting.mp4'
-  return '请输入资源绝对路径，例如 F:\\Code\\RetrievalSys\\backend\\test_data\\ImageRetrieval'
+  return '请输入资源绝对路径，例如 E:\\Code\\MultiRetrievalSystem\\data\\Image'
 })
 
 const resourceHelperText = computed(() => {
