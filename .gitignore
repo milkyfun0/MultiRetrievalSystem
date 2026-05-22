@@ -36,6 +36,12 @@ tmp/
 temp/
 *.tmp
 
+# Node / 前端构建产物
+node_modules/
+dist/
+.vite/
+*.local
+
 # 测试数据
 test_data/
 tests/test_data/
